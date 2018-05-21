@@ -24,8 +24,8 @@ public class SnakeHandler extends TextWebSocketHandler {
         
         //Aquí hacemos un ConcurrentHashMap<string nombre, snakeGame>, que sean las salas
         private ConcurrentHashMap<WebSocketSession, Snake> sessions = new ConcurrentHashMap<>();
-	//private SnakeGame snakeGame = new SnakeGame();
-        private ConcurrentHashMap<String, SnakeGame> snakeGame;
+	private SnakeGame snakeGame = new SnakeGame();
+        //private ConcurrentHashMap<String, SnakeGame> snakeGame;
         
         //Diccionario de funciones
         ConcurrentHashMap<String, Function> Funciones;
@@ -34,11 +34,11 @@ public class SnakeHandler extends TextWebSocketHandler {
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
             //Creamos una serpiente, que ahora guardará el nombre. La sala ya se la daremos
 
-            /*
 		int id = snakeIds.getAndIncrement();
 
 		Snake s = new Snake(id, session);
 
+                sessions.put(session, s);
 		session.getAttributes().put(SNAKE_ATT, s);
 
 		snakeGame.addSnake(s);
@@ -52,7 +52,8 @@ public class SnakeHandler extends TextWebSocketHandler {
 		String msg = String.format("{\"type\": \"join\",\"data\":[%s]}", sb.toString());
 		
 		snakeGame.broadcast(msg);
-                */
+                
+            
 	}
     
     private void Chat(WebSocketSession session, TextMessage message) throws Exception{
@@ -62,12 +63,11 @@ public class SnakeHandler extends TextWebSocketHandler {
                 JsonNode mens = mapper.readTree(message.getPayload());
                 ObjectNode difusion = mapper.createObjectNode();
                 difusion.put("name",mens.get("name").asText());
-                difusion.put("mensaje",mens.get("mensaje").asText());
+                difusion.put("mensaje",mens.get("message").asText());
+                difusion.put("type","chat");
                 
                 for(Entry<WebSocketSession, Snake> s : sessions.entrySet()){
-                
-                    if(s.getKey() != session)
-                        
+
                         s.getKey().sendMessage(new TextMessage(difusion.toString()));
                 
                 }
@@ -93,15 +93,17 @@ public class SnakeHandler extends TextWebSocketHandler {
                         
                             Chat(session,message);
                         
+                        }else{
+                            
+                            if (payload.equals("ping")) {
+                                    return;
+                            }
+
+                            Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
+
+                            Direction d = Direction.valueOf(payload.toUpperCase());
+                            s.setDirection(d);
                         }
-			if (payload.equals("ping")) {
-				return;
-			}
-
-			Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
-
-			Direction d = Direction.valueOf(payload.toUpperCase());
-			s.setDirection(d);
 
 		} catch (Exception e) {
 			System.err.println("Exception processing message " + message.getPayload());
@@ -112,7 +114,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-            /*
+            
 		System.out.println("Connection closed. Session " + session.getId());
 
 		Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
@@ -122,7 +124,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 		String msg = String.format("{\"type\": \"leave\", \"id\": %d}", s.getId());
 		
 		snakeGame.broadcast(msg);
-            */
+            
 	}
         
         /*
@@ -162,14 +164,14 @@ public class SnakeHandler extends TextWebSocketHandler {
             ArrayList<String[]> sol = new ArrayList<>();
             String[] aux = new String[3];
             
-            for(String s : snakeGame.keySet()){
+            /*for(String s : snakeGame.keySet()){
                 aux[0] = s;
                 aux[1] = snakeGame.get(s).getDif();
                 aux[2] = "" + snakeGame.get(s).getNum();
                 
                 sol.add(aux);
                 aux = new String[3];
-            }
+            }*/
             
             return sol;
         }

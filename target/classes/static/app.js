@@ -216,7 +216,7 @@ $(document).ready(function(){
             name : name,
             message : $('#message').val()	
         }
-        Console.log(object.name + " : " + object.message);
+
         game.socket.send(JSON.stringify(object));
         $('#message').val('');
     });

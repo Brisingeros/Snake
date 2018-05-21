@@ -19,13 +19,13 @@ public class SnakeTest {
 		
 		WebSocketClient wsc = new WebSocketClient();
 		wsc.connect("ws://127.0.0.1:9000/snake");
-        wsc.disconnect();		
+                wsc.disconnect();		
 	}
 	
 	@Test
 	public void testJoin() throws Exception {
 		
-		AtomicReference<String> firstMsg = new AtomicReference<String>();
+		AtomicReference<String> firstMsg = new AtomicReference<>();
 		
 		WebSocketClient wsc = new WebSocketClient();
 		wsc.onMessage((session, msg) -> {
