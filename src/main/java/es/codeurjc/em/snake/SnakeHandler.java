@@ -68,7 +68,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                 
                 for(Entry<WebSocketSession, Snake> s : sessions.entrySet()){
 
-                        s.getKey().sendMessage(new TextMessage(difusion.toString()));
+                    s.getKey().sendMessage(new TextMessage(difusion.toString()));
                 
                 }
             }catch(IOException e){

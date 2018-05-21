@@ -4,6 +4,8 @@ Console.log = (function(message) {
 	var console = document.getElementById('console');
 	var p = document.createElement('p');
 	p.style.wordWrap = 'break-word';
+        
+        //p.style.color = '#ffa500';
 	p.innerHTML = message;
 	console.appendChild(p);
 	while (console.childNodes.length > 25) {
@@ -101,7 +103,7 @@ class Game {
 	setDirection(direction) {
 		this.direction = direction;
 		this.socket.send(direction);
-		Console.log('Sent: Direction ' + direction);
+		//Console.log('Sent: Direction ' + direction);
 	}
 
 	startGameLoop() {
@@ -202,7 +204,12 @@ class Game {
                                 break;
 
                         case 'chat':
-                                Console.log(packet.name + " : " + packet.mensaje);
+                                var color;
+                                if(packet.partida)
+                                    color = 'green';
+                                else
+                                    color = 'red';
+                                Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
 
                     }
             }
