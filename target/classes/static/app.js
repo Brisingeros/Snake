@@ -26,7 +26,7 @@ function myFunction()
 
 }
 
-myFunction();
+
 Console.log("Nombre jugador: " + name);
 
 let game;

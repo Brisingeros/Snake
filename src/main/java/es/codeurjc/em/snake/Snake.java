@@ -114,4 +114,9 @@ public class Snake {
 	public String getHexColor() {
 		return this.hexColor;
 	}
+
+        public WebSocketSession getSession() {
+            return session;
+        }
+        
 }

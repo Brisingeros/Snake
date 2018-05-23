@@ -14,12 +14,17 @@ public class APIRest {
     
     @PostMapping("/newGame")
     public void crearNuevaPartida(@RequestBody String nameGame){
-        
+        handler.addGame(nameGame);
     }
     
     @GetMapping("/partidas")
-    public ArrayList<String[]> getPartidas(){
-        return handler.getPartidas();
+    public String[] getPartidas(){
+        ArrayList<String> aux = handler.getNombrePartidas();
+        String[] sol = null;
+        
+        String[] solu = aux.toArray(sol);
+        
+        return solu;
     } 
     
 }
