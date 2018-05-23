@@ -8,24 +8,29 @@ import org.springframework.web.bind.annotation.*;
 public class APIRest {
     
     private static SnakeHandler handler;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
+    
     public static void setSnakeHandler(SnakeHandler hand){
         handler = hand;
     }
     
-    @PostMapping("/newGame")
+    @RequestMapping(value = "/newGame", method = RequestMethod.POST)
     public void crearNuevaPartida(@RequestBody String nameGame){
         handler.addGame(nameGame);
+        System.out.println("//////////////////////////////////////////NUEVO");
     }
     
-    @GetMapping("/partidas")
+    @RequestMapping(value = "/partidas", method = RequestMethod.GET)
     public String getPartidas(){
         ArrayList<String> aux = handler.getNombrePartidas();
-        String[] sol = null;
+        String[] sol = new String[aux.size()];
         
-        String[] solu = aux.toArray(sol);
+        aux.toArray(sol);
         
-        return gson.toJson(solu);
-    } 
+        System.out.println("//////////////////////////////////////////GAMES");
+        
+        //return gson.toJson(sol);
+        return gson.toJson(aux);
+    }
     
 }

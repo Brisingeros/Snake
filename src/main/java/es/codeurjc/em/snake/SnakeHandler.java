@@ -1,12 +1,9 @@
 package es.codeurjc.em.snake;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -37,7 +34,7 @@ public class SnakeHandler extends TextWebSocketHandler {
         public SnakeHandler(){
             this.Funciones = new ConcurrentHashMap<>();
             this.sessions = new ConcurrentHashMap<>();
-            //this.salas = new ConcurrentHashMap<>();
+            this.salas = new ConcurrentHashMap<>();
             
             this.Funciones.put("Chat", new Function(){
                 @Override

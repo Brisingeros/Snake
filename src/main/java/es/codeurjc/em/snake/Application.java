@@ -18,11 +18,14 @@ public class Application implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(snakeHandler(), "/snake");
+		registry.addHandler(snakeHandler(), "/snake").setAllowedOrigins("*");
 	}
 
 	@Bean
 	public WebSocketHandler snakeHandler() {
-		return new SnakeHandler();
+            SnakeHandler snek = new SnakeHandler();
+            APIRest.setSnakeHandler(snek);
+            
+            return snek;
 	}
 }

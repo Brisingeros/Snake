@@ -183,7 +183,7 @@ class Game {
                         params:[""]
                     }
 
-					crearDiv("prueba");
+                    crearDiv("prueba");
                     setInterval(() => this.socket.send(JSON.stringify(ping)), 5000);
             }
 
@@ -255,29 +255,22 @@ $(document).ready(function(){
 
 			method: "POST",
 			url: "http://" + window.location.host + "/newGame",
-			data: JSON.stringify(p),
+			data: JSON.stringify({ p }),
 			processData: false,
 			headers: {
 
 				"Content-type":"application/json"
 
 			}
-		}).done(function(data, textStatus, jqXHR){
+		}).done(function(data){
 
-			console.log(textStatus+" " + jqXHR.statusCode());
+			console.log("Creada partida: " + p);
+                        partidas();
 			
-		}).fail(function(data, textStatus, jqXHR){
-
-			console.log(textStatus + " " + jqXHR.statusCode());
-
 		});
 
-		partidas();
-
     });
-    $('#actualizar-btn').click(function() { //actualizar partidas
-        
-    });
+    $('#actualizar-btn').click(partidas());
     
 })
 
@@ -285,30 +278,29 @@ function partidas(){
 
     $.ajax({
 
-        methos:"GET",
+        method:"GET",
         url:"http://" + window.location.host + "/partidas",
-        processData:false,
-        headers:{
 
-            "Content-type":"application/json"
+    }).done(function(data){
         
-        }
-
-    }).done(function(data, textStatus, jqXHR){
+                borrarDiv();
 
 		var partidas = JSON.parse(data);
 		for(var i = 0; i < partidas.length; i++){
 
-			crearDiv(partidas[i]);
+			crearDiv(partidas.values()[i]);
+                        Console.log(partidas[i]);
 
 		}
     
-    }).fail(function(data, textStatus,jqXHR){
-
-        console.log(textStatus + " " + jqXHR.statusCode());
-    
     });
 
+}
+
+function borrarDiv(){
+    
+    $('#partidas-container').empty();
+    
 }
 
 function crearDiv(nombreP){
@@ -331,7 +323,8 @@ function crearDiv(nombreP){
 	},false);
 	newDiv.appendChild(boton);
 	
-	document.body.appendChild(newDiv);
+	//document.body.appendChild(newDiv);
+        $('#partidas-container').append(newDiv);
 
 }
 game = new Game();
