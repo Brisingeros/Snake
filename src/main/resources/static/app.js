@@ -26,9 +26,6 @@ function myFunction()
 
 }
 
-
-Console.log("Nombre jugador: " + name);
-
 let game;
 
 class Snake {
@@ -173,12 +170,20 @@ class Game {
                     Console.log('Info: WebSocket connection opened.');
                     Console.log('Info: Press an arrow key to begin.');
 
+                    myFunction();
+                    var newSnake = {
+                        funcion: "crearSerpiente",
+                        params: [name]
+                    
+                    }
+                    this.socket.send(JSON.stringify(newSnake));
                     this.startGameLoop();
                     var ping = {
                         funcion: "ping",
                         params:[""]
                     }
 
+					crearDiv("prueba");
                     setInterval(() => this.socket.send(JSON.stringify(ping)), 5000);
             }
 
@@ -226,6 +231,7 @@ class Game {
                     
 	}
 }
+
 $(document).ready(function(){
     $('#send-btn').click(function() {
         var object = {
@@ -236,8 +242,98 @@ $(document).ready(function(){
         game.socket.send(JSON.stringify(object));
         $('#message').val('');
     });
+    $('#crear-btn').click(function(nombrePartida) {
+		var p;
+
+		do{
+
+			p =prompt("Inserta el nombre de la sala","Nombre");
+
+		}while(p =="Nombre");
+
+		$.ajax({
+
+			method: "POST",
+			url: "http://" + window.location.host + "/newGame",
+			data: JSON.stringify(p),
+			processData: false,
+			headers: {
+
+				"Content-type":"application/json"
+
+			}
+		}).done(function(data, textStatus, jqXHR){
+
+			console.log(textStatus+" " + jqXHR.statusCode());
+			
+		}).fail(function(data, textStatus, jqXHR){
+
+			console.log(textStatus + " " + jqXHR.statusCode());
+
+		});
+
+		partidas();
+
+    });
+    $('#actualizar-btn').click(function() { //actualizar partidas
+        
+    });
+    
 })
 
+function partidas(){
+
+    $.ajax({
+
+        methos:"GET",
+        url:"http://" + window.location.host + "/partidas",
+        processData:false,
+        headers:{
+
+            "Content-type":"application/json"
+        
+        }
+
+    }).done(function(data, textStatus, jqXHR){
+
+		var partidas = JSON.parse(data);
+		for(var i = 0; i < partidas.length; i++){
+
+			crearDiv(partidas[i]);
+
+		}
+    
+    }).fail(function(data, textStatus,jqXHR){
+
+        console.log(textStatus + " " + jqXHR.statusCode());
+    
+    });
+
+}
+
+function crearDiv(nombreP){
+
+	var newDiv = document.createElement("div"); 
+	var newContent = document.createTextNode(nombreP); 
+	newDiv.appendChild(newContent); //añade texto al div creado. 
+	var boton = document.createElement("button");
+	boton.type = "button";
+	boton.textContent = "unirse";
+	boton.style.alignSelf = "right";
+	boton.id = "#unirse-btn"
+	boton.addEventListener("click", function(){	
+		var part = {
+            funcion: "unirGame",
+            params:[nombreP]
+        }
+
+        game.socket.send(JSON.stringify(part));
+	},false);
+	newDiv.appendChild(boton);
+	
+	document.body.appendChild(newDiv);
+
+}
 game = new Game();
 
 game.initialize()

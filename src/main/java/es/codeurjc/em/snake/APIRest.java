@@ -1,5 +1,6 @@
 package es.codeurjc.em.snake;
 
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 public class APIRest {
     
     private static SnakeHandler handler;
-    
+    private Gson gson = new Gson();
     public static void setSnakeHandler(SnakeHandler hand){
         handler = hand;
     }
@@ -18,13 +19,13 @@ public class APIRest {
     }
     
     @GetMapping("/partidas")
-    public String[] getPartidas(){
+    public String getPartidas(){
         ArrayList<String> aux = handler.getNombrePartidas();
         String[] sol = null;
         
         String[] solu = aux.toArray(sol);
         
-        return solu;
+        return gson.toJson(solu);
     } 
     
 }
