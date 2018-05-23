@@ -36,6 +36,7 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.sessions = new ConcurrentHashMap<>();
             this.salas = new ConcurrentHashMap<>();
             
+            
             this.Funciones.put("Chat", new Function(){
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {

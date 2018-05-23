@@ -160,6 +160,7 @@ class Game {
 		}
 	}
 
+
 	connect() {
 
             this.socket = new WebSocket('ws://'+ window.location.host +'/snake');
