@@ -1,6 +1,7 @@
 package es.codeurjc.em.snake;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,22 +42,15 @@ public class SnakeHandler extends TextWebSocketHandler {
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     try{
-                        /*
+                        
                         ObjectNode difusion = mapper.createObjectNode();
                         difusion.put("name",params[0]);
                         difusion.put("mensaje",params[1]);
-                        difusion.put("type","chat");*/
-                        
-                        //Parse GSON
-                        
-                        String aux = "{name: " + params[0] + ",\n" +
-                                     "mensaje: " + params[1] + ",\n" +
-                                     "type: " + "chat" + "}";
-                        
+                        difusion.put("type","chat");
+
                         for(Snake s : sessions.values()){
-                            
-                            s.getSession().sendMessage(new TextMessage(aux));
-                            //s.getSession().sendMessage(new TextMessage(difusion.toString()));
+
+                            s.getSession().sendMessage(new TextMessage(difusion.toString()));
                             
                         }
                         
@@ -96,6 +90,21 @@ public class SnakeHandler extends TextWebSocketHandler {
                     Snake player = sessions.get(params[1]);
                     
                     sala.addSnake(player);
+                    
+                    try{
+                        ObjectNode difusion = mapper.createObjectNode();
+                        difusion.put("name",params[1]);
+                        difusion.put("type","sala");
+
+                        for(Snake s : sala.getSnakes()){
+
+                            s.getSession().sendMessage(new TextMessage(difusion.toString()));
+
+                        }
+                            
+                    } catch (IOException ex) {
+                        Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                 }            
             

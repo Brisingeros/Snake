@@ -173,6 +173,7 @@ class Game {
 
                     myFunction();
                     var newSnake = {
+						
                         funcion: "crearSerpiente",
                         params: [name]
                     
@@ -184,7 +185,6 @@ class Game {
                         params:[""]
                     }
 
-                    crearDiv("prueba");
                     setInterval(() => this.socket.send(JSON.stringify(ping)), 5000);
             }
 
@@ -225,7 +225,9 @@ class Game {
                                     color = 'green';
                                 else
                                     color = 'red';
-                                Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
+								Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
+						
+						case 'sala' : sala(packet.name);
 
                     }
             }
@@ -256,7 +258,7 @@ $(document).ready(function(){
 
 			method: "POST",
 			url: "http://" + window.location.host + "/newGame",
-			data: JSON.stringify({ p }),
+			data: JSON.stringify(p),
 			processData: false,
 			headers: {
 
@@ -266,7 +268,7 @@ $(document).ready(function(){
 		}).done(function(data){
 
 			console.log("Creada partida: " + p);
-                        partidas();
+			partidas();
 			
 		});
 
@@ -284,13 +286,12 @@ function partidas(){
 
     }).done(function(data){
         
-                borrarDiv();
+		borrarDiv();
 
 		var partidas = JSON.parse(data);
 		for(var i = 0; i < partidas.length; i++){
 
-			crearDiv(partidas.values()[i]);
-                        Console.log(partidas[i]);
+			crearDiv(JSON.parse(partidas[i])); //para que salga sin comillas parseamos (otra vez)
 
 		}
     
@@ -300,14 +301,14 @@ function partidas(){
 
 function borrarDiv(){
     
-    $('#partidas-container').empty();
+    $('#partidas').empty();
     
 }
 
 function crearDiv(nombreP){
 
 	var newDiv = document.createElement("div"); 
-	var newContent = document.createTextNode(nombreP); 
+	var newContent = document.createTextNode(nombreP + "  "); 
 	newDiv.appendChild(newContent); //añade texto al div creado. 
 	var boton = document.createElement("button");
 	boton.type = "button";
@@ -317,15 +318,23 @@ function crearDiv(nombreP){
 	boton.addEventListener("click", function(){	
 		var part = {
             funcion: "unirGame",
-            params:[nombreP]
+            params:[nombreP,name]
         }
 
         game.socket.send(JSON.stringify(part));
 	},false);
 	newDiv.appendChild(boton);
-	
-	//document.body.appendChild(newDiv);
-        $('#partidas-container').append(newDiv);
+
+	$('#partidas').append(newDiv);
+
+}
+
+function sala(jugador){
+
+	var j = document.createElement("p");
+	p.innerHTML = JSON.parse(jugador);
+	p.style.color = "white";
+	$('#jugadores').appendChild(j);
 
 }
 game = new Game();
