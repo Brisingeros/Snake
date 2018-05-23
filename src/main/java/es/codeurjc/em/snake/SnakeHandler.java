@@ -2,7 +2,10 @@ package es.codeurjc.em.snake;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -19,16 +22,62 @@ public class SnakeHandler extends TextWebSocketHandler {
 	private static final String SNAKE_ATT = "snake";
         private ObjectMapper mapper = new ObjectMapper();
 	private AtomicInteger snakeIds = new AtomicInteger(0);  //Sirve para dar el id a las serpientes
-
+        private Gson gson = new Gson();
         //Crear un ConcurrentHashMap <session, Snake>, así le podemos dar nombre a la serpiente desde el textHandler
         
         //Aquí hacemos un ConcurrentHashMap<string nombre, snakeGame>, que sean las salas
-        private ConcurrentHashMap<WebSocketSession, Snake> sessions = new ConcurrentHashMap<>();
+        private ConcurrentHashMap<WebSocketSession, Snake> sessions;
 	private SnakeGame snakeGame = new SnakeGame();
         //private ConcurrentHashMap<String, SnakeGame> snakeGame;
         
         //Diccionario de funciones
-        ConcurrentHashMap<String, Function> Funciones;
+        private ConcurrentHashMap<String, Function> Funciones;
+        
+        public SnakeHandler(){
+            this.Funciones = new ConcurrentHashMap<>();
+            this.sessions = new ConcurrentHashMap<>();
+            
+            this.Funciones.put("Chat", new Function(){
+                @Override
+                public void ExecuteAction(String[] params, WebSocketSession session) {
+                    try{
+                        ObjectNode difusion = mapper.createObjectNode();
+                        difusion.put("name",params[0]);
+                        difusion.put("mensaje",params[1]);
+                        difusion.put("type","chat");
+
+                        for(Entry<WebSocketSession, Snake> s : sessions.entrySet()){
+
+                            s.getKey().sendMessage(new TextMessage(difusion.toString()));
+
+                        }
+                    }catch(IOException e){
+
+                        System.out.println("Error: " + e.getMessage());
+
+                    }
+                }
+            });
+            this.Funciones.put("ping", new Function(){
+                @Override
+                public void ExecuteAction(String[] params, WebSocketSession session) {
+                    return;
+                }
+            });
+            
+            this.Funciones.put("direccion", new Function(){
+            
+                @Override
+                public void ExecuteAction(String[] params, WebSocketSession session) {
+                    Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
+
+                    Direction d = Direction.valueOf(params[0].toUpperCase());
+                    s.setDirection(d);
+                    
+                }            
+            
+            });
+        }
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -86,6 +135,7 @@ public class SnakeHandler extends TextWebSocketHandler {
             //Chat: verde jugando, rojo no jugando
             //etc
 
+            /*
 		try {
 
 			String payload = message.getPayload();
@@ -108,7 +158,23 @@ public class SnakeHandler extends TextWebSocketHandler {
 		} catch (Exception e) {
 			System.err.println("Exception processing message " + message.getPayload());
 			e.printStackTrace(System.err);
-		}
+		}*/
+            
+            try{
+            
+                String msg = message.getPayload();
+
+                Instruccion i = gson.fromJson(msg, Instruccion.class);//mapper.readValue(msg, Instruccion.class);
+                Function f = Funciones.get(i.getFuncion());
+                System.out.println(i.getFuncion() + " " + i.getParams());
+                f.ExecuteAction(i.getParams(), session);
+            
+            }catch (Exception e) {
+                System.err.println("Exception processing message " + message.getPayload());
+                e.printStackTrace(System.err);
+            }
+            
+            
 	}
 
 	@Override
@@ -126,6 +192,8 @@ public class SnakeHandler extends TextWebSocketHandler {
 		snakeGame.broadcast(msg);
             
 	}
+        
+        
         
         /*
         this.Funciones.put("FuncionBuscarPartida", new Function(){   

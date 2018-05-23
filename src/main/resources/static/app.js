@@ -102,7 +102,13 @@ class Game {
 
 	setDirection(direction) {
 		this.direction = direction;
-		this.socket.send(direction);
+                var dir = {
+                    
+                    funcion:"direccion",
+                    params:[this.direction]
+                    
+                }
+		this.socket.send(JSON.stringify(dir));
 		//Console.log('Sent: Direction ' + direction);
 	}
 
@@ -168,8 +174,12 @@ class Game {
                     Console.log('Info: Press an arrow key to begin.');
 
                     this.startGameLoop();
+                    var ping = {
+                        funcion: "ping",
+                        params:[""]
+                    }
 
-                    setInterval(() => this.socket.send('ping'), 5000);
+                    setInterval(() => this.socket.send(JSON.stringify(ping)), 5000);
             }
 
             this.socket.onclose = () => {
@@ -219,9 +229,8 @@ class Game {
 $(document).ready(function(){
     $('#send-btn').click(function() {
         var object = {
-            chat: true,
-            name : name,
-            message : $('#message').val()	
+            funcion: "Chat",
+            params:[name, $('#message').val()]
         }
 
         game.socket.send(JSON.stringify(object));
