@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +12,6 @@ public class APIRest {
     private static SnakeHandler handler;
     private final Gson gson = new Gson();
     
-    @Autowired
     private CopyOnWriteArrayList<Puntos> puntuaciones = new CopyOnWriteArrayList<>();
     
     public static void setSnakeHandler(SnakeHandler hand){

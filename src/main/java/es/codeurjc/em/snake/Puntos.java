@@ -1,12 +1,9 @@
 package es.codeurjc.em.snake;
 
-import org.springframework.stereotype.Component;
-
 /**
  *
  * @author Brisin
  */
-@Component
 public class Puntos{
     
     private String name;
