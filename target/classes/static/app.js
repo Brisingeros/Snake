@@ -28,7 +28,8 @@ function myFunction()
 }
 
 let game;
-
+let enPartida = false;
+let salaP = null;
 class Snake {
 
 	constructor() {
@@ -163,10 +164,11 @@ class Game {
 
 	sala(jugadores,sala){
 		
-		var d = document.getElementById("sala");
-		borrarDiv('#sala');
+		var d = document.getElementById("salaActual");
+		borrarDiv('#salaActual');
 		this.context.font = "30px Verdana";
 		this.context.fillStyle = "white";
+		salaP = sala;
 		this.context.fillText("Sala: " + sala, 50, 50);
 		var alto = 50;
 		var b1 = document.createElement("button");
@@ -174,9 +176,19 @@ class Game {
 
 		b1.addEventListener("click", function(){
 
+			enPartida = false;
+			var o = {
+
+				funcion: "salirSala",
+				params: [name,enPartida,salaP]
+
+			}
+			game.socket.send(JSON.stringify(o));
 			game.context.clearRect(0, 0, 640, 480);
-			borrarDiv('#sala');
+			borrarDiv('#salaActual');
 			$("#partidas-container").children().prop('disabled',false);
+			$('#partidas').children().prop('style.display','block');
+			salaP = null;
 			//ENVIAR MENSAJE AL WEBSOCKET DE QUE SE HA IDO UN JUGADOR DE LA PARTIDA
 
 		})
@@ -260,17 +272,25 @@ class Game {
 
                         case 'chat':
                                 var color;
-                                if(packet.partida)
+                                if(packet.enPartida)
                                     color = 'green';
                                 else
                                     color = 'red';
 								Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
 								break;
 						case 'sala' :
+								document.getElementById("partidas").children.style.display = 'none';			
 								$("#partidas-container").children().prop('disabled',true);
 								this.sala(JSON.parse(packet.players),packet.sala);
 								break;
 						case 'jugar' : this.startGameLoop();
+								break;
+
+						case 'quitarSala': 
+								//eliminamos el div de la partida porque se han salido todos los jugadores
+								var node = document.getElementById(packet.sala);
+								node.parentNode.removeChild(node);
+								break;
 
                     }
             }
@@ -352,6 +372,7 @@ function borrarDiv(id){
 function crearDiv(nombreP){
 
 	var newDiv = document.createElement("div"); 
+	newDiv.id = nombreP;
 	var newContent = document.createTextNode(nombreP + "  "); 
 	newDiv.appendChild(newContent); //añade texto al div creado. 
 	var boton = document.createElement("button");
@@ -367,6 +388,7 @@ function crearDiv(nombreP){
 
         game.socket.send(JSON.stringify(part));
 	},false);
+	salaP = nombreP;
 	newDiv.appendChild(boton);
 
 	$('#partidas').append(newDiv);

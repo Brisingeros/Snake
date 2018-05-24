@@ -22,12 +22,14 @@ public class Snake {
 
 	private final WebSocketSession session;
         private final String name;
+        private boolean inGame;
         
 	public Snake(int id, String name, WebSocketSession session) {
 		this.id = id;
 		this.session = session;
 		this.hexColor = SnakeUtils.getRandomHexColor();
                 this.name = name;
+                this.inGame = false;
 		resetState();
 	}
 
@@ -123,6 +125,14 @@ public class Snake {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isInGame() {
+        return inGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
     }
         
         

@@ -45,7 +45,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                     try{
                         
                         ObjectNode difusion = mapper.createObjectNode();
+                        Snake sn = sessions.get(params[0]);
                         difusion.put("name",params[0]);
+                        difusion.put("enPartida",sn.isInGame());
                         difusion.put("mensaje",params[1]);
                         difusion.put("type","chat");
 
@@ -81,7 +83,32 @@ public class SnakeHandler extends TextWebSocketHandler {
                 }            
             
             });
+            this.Funciones.put("salirSala",new Function(){ //salir de la sala: eliminamos de la sala el jugador. Si hay 0 jugadores al final, se elimina la sala
+                @Override
+                public void ExecuteAction(String[] params, WebSocketSession session) {
+                    
+                    Snake s = sessions.get(params[0]);
+                    s.setInGame(Boolean.getBoolean(params[1]));
+                    salas.get(params[2]).removeSnake(s);
+                    if(salas.get(params[2]).getNum() == 0){
+                        salas.remove(params[2]);
+                        ObjectNode n = mapper.createObjectNode();
+                        n.put("type","quitarSala");
+                        n.put("sala",params[2]);
+                        for(Snake sk : sessions.values()){
+                            
+                            try {
+                                sk.getSession().sendMessage(new TextMessage(n.toString()));
+                            } catch (IOException ex) {
+                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        
+                        }
+                    }
+                    
+                }
             
+            });
             this.Funciones.put("unirGame", new Function(){
             
                 @Override
@@ -89,6 +116,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                     SnakeGame sala = salas.get(params[0]);
                     Snake player = sessions.get(params[1]);
+                    player.setInGame(true);
                     System.out.println("jugador: " + params[1]);
                     sala.addSnake(player);
                     
@@ -156,7 +184,6 @@ public class SnakeHandler extends TextWebSocketHandler {
             });
         }
 
-	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
             
             
@@ -205,6 +232,10 @@ public class SnakeHandler extends TextWebSocketHandler {
             
 	}
         
+        public void borrarSala(){
+        
+        
+        }
         public ArrayList<String> getNombrePartidas(){
             
             ArrayList<String> sol = new ArrayList<>();
