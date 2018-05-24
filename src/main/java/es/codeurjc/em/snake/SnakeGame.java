@@ -17,6 +17,8 @@ public class SnakeGame {
         
         //Dificultad y modo tiene que ir aquí. How? Futuro
         private String difficulty;
+        
+        private boolean inGame;
 
 	private ScheduledExecutorService scheduler;
 
@@ -24,6 +26,7 @@ public class SnakeGame {
         
             snakes = new ConcurrentHashMap<>();
             numSnakes = new AtomicInteger();
+            inGame = false;
             
         }
 	public void addSnake(Snake snake) {
@@ -127,4 +130,14 @@ public class SnakeGame {
         public String getDif(){
             return difficulty;
         }
+
+        public boolean isInGame() {
+            return inGame;
+        }
+
+        public void setInGame(boolean inGame) {
+            this.inGame = inGame;
+        }
+        
+        
 }

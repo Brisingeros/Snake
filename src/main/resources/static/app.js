@@ -177,6 +177,8 @@ class Game {
 		b1.addEventListener("click", function(){
 
 			enPartida = false;
+			game.stopGameLoop();
+			game.context.clearRect(0, 0, 640, 480);
 			var o = {
 
 				funcion: "salirSala",
@@ -184,12 +186,11 @@ class Game {
 
 			}
 			game.socket.send(JSON.stringify(o));
-			game.context.clearRect(0, 0, 640, 480);
+			
 			borrarDiv('#salaActual');
-			$("#partidas-container").children().prop('disabled',false);
-			$('#partidas').children().prop('style.display','block');
+			document.getElementById("partidas-container").style.display = 'block';
 			salaP = null;
-			//ENVIAR MENSAJE AL WEBSOCKET DE QUE SE HA IDO UN JUGADOR DE LA PARTIDA
+			
 
 		})
 		
@@ -198,6 +199,18 @@ class Game {
 
 			var b2 = document.createElement("button");
 			b2.textContent = "Comenzar juego";
+			b2.addEventListener("click",function(){
+
+				var ob = {
+
+					funcion: "comenzarPartida",
+					params: [salaP]
+
+				}
+
+				game.socket.send(JSON.stringify(ob));
+
+			})
 			d.appendChild(b2);
 
 		}
@@ -257,10 +270,11 @@ class Game {
                                 for (var j = 0; j < packet.data.length; j++) {
                                         this.addSnake(packet.data[j].id, packet.data[j].color);
 								}
-								sala(packet.name);
+								//this.sala(packet.name);
                                 break;
                         case 'leave':
-                                this.removeSnake(packet.id);
+								this.removeSnake(packet.id);
+								this.context.clearRect(0, 0, 640, 480);
                                 break;
                         case 'dead':
                                 Console.log('Info: Your snake is dead, bad luck!');
@@ -278,9 +292,8 @@ class Game {
                                     color = 'red';
 								Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
 								break;
-						case 'sala' :
-								document.getElementById("partidas").children.style.display = 'none';			
-								$("#partidas-container").children().prop('disabled',true);
+						case 'sala' :		
+								document.getElementById("partidas-container").style.display = 'none';
 								this.sala(JSON.parse(packet.players),packet.sala);
 								break;
 						case 'jugar' : this.startGameLoop();
