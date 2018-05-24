@@ -164,6 +164,7 @@ class Game {
 
 	sala(jugadores,sala){
 		
+		game.context.clearRect(0, 0, 640, 480);
 		var d = document.getElementById("salaActual");
 		borrarDiv('#salaActual');
 		this.context.font = "30px Verdana";
@@ -274,7 +275,6 @@ class Game {
                                 break;
                         case 'leave':
 								this.removeSnake(packet.id);
-								this.context.clearRect(0, 0, 640, 480);
                                 break;
                         case 'dead':
                                 Console.log('Info: Your snake is dead, bad luck!');
@@ -304,6 +304,9 @@ class Game {
 								var node = document.getElementById(packet.sala);
 								node.parentNode.removeChild(node);
 								break;
+
+						case 'senal' :
+								Console.log(packet.contenido);
 
                     }
             }
@@ -350,7 +353,22 @@ $(document).ready(function(){
 		});
 
     });
-	$('#actualizar-btn').click(partidas());
+	$('#actualizar-btn').click(function(){
+		
+		partidas()
+	});
+
+	$('#buscar-btn').click(function(){
+		
+		var o = {
+
+			funcion: "matchMaking",
+			params:[name]
+
+		}
+
+		game.socket.send(JSON.stringify(o));
+	});
     
 })
 

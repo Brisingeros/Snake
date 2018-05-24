@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,8 +28,6 @@ public class SnakeHandler extends TextWebSocketHandler {
         //Aquí hacemos un ConcurrentHashMap<string nombre, snakeGame>, que sean las salas
         private ConcurrentHashMap<String, SnakeGame> salas;
         private ConcurrentHashMap<Key, Snake> sessions;
-	//private SnakeGame snakeGame = new SnakeGame();
-        //private ConcurrentHashMap<String, SnakeGame> snakeGame;
         
         //Diccionario de funciones
         private ConcurrentHashMap<String, Function> Funciones;
@@ -244,7 +243,6 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.Funciones.put("comenzarPartida",new Function(){
                 
                 @Override
-                
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
                     SnakeGame sala = salas.get(params[0]);
@@ -262,9 +260,45 @@ public class SnakeHandler extends TextWebSocketHandler {
                     }
                     
                 }
+            });
             
+            this.Funciones.put("matchMaking",new Function(){
                 
-            
+                @Override
+                public void ExecuteAction(String[] params, WebSocketSession session) {  //Params: nombrePlayer
+                    
+                    String[] para = {"none", params[0]};
+                    
+                    for(String s : salas.keySet()){
+                        
+                        SnakeGame sg = salas.get(s);
+                        
+                        if(sg.getNum() > 0 && sg.getNum() < 4){
+                            para[0] = s;
+                            
+                            Funciones.get("unirGame").ExecuteAction(para, session);
+                            
+                            return;
+                        }
+                        
+                    }
+                    
+                    if(para[0].equals("none")){
+                        try {
+                            
+                            ObjectNode difusion = mapper.createObjectNode();
+                            difusion.put("type","senal");
+                            difusion.put("contenido", "No pudo encontrarse una partida que se ajuste a las características. Crea una propia");
+                            
+                            session.sendMessage(new TextMessage(difusion.toString()));
+                            
+                        } catch (IOException ex) {
+                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    
+                }
+                
             });
         }
 
@@ -333,11 +367,6 @@ public class SnakeHandler extends TextWebSocketHandler {
 		snakeGame.broadcast(msg);*/
             
 	}
-        
-        public void borrarSala(){
-        
-        
-        }
         
         public ArrayList<String> getNombrePartidas(){
             
