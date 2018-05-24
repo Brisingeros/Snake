@@ -89,68 +89,73 @@ public class SnakeHandler extends TextWebSocketHandler {
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
-                    Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
-                    s.setInGame(false);
+                    Snake snek = (Snake) session.getAttributes().get(SNAKE_ATT);
                     String nombreSala = (String) session.getAttributes().get(SALA_ATT);
                     
                     SnakeGame sala = salas.get(nombreSala);
-                    sala.removeSnake(s);
-
-                    session.getAttributes().replace(SALA_ATT, "none");
-
-                    s.resetState();
                     
-                    if(sala.getNum() == 0 || (sala.getNum() == 1 && sala.isInGame())){
-                        salas.remove(nombreSala);
-                        ObjectNode n = mapper.createObjectNode();
-                        n.put("type","quitarSala");
-                        n.put("sala",nombreSala);
-                        for(Snake sk : sessions.values()){
-
+                    snek.setInGame(false);
+                    
+                    //Hasta aquí, la sala existe
+                    
+                    sala.removeSnake(snek);
+                    
+                    int num = sala.getNum();
+                    boolean jugando = sala.isInGame();
+                    
+                    if(jugando){
+                    
+                        if(num <= 1){
+                            
+                            Snake aux = (Snake) sala.getSnakes().toArray()[0];
+                            //Sacar a esta serpiente de la sala y eliminar la sala
+                            
+                            sala.setInGame(false);
+                            
                             try {
-                                sk.getSession().sendMessage(new TextMessage(n.toString()));
+                                ObjectNode difusion = mapper.createObjectNode();
+                                difusion.put("type","finJuego");
+                                difusion.put("contenido", "Error en partida. Victoria por retirada");
+
+                                aux.getSession().sendMessage(new TextMessage(difusion.toString()));
                             } catch (IOException ex) {
                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
+                            
+                            
+                        } else{
+                            
+                            String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
 
-                        }
-                    } else if(!sala.isInGame()){
-
-                            ArrayList<String> jugadores = new ArrayList<>();
-                            for(Snake a : sala.getSnakes()){
-
-                                jugadores.add(a.getName());
-                            }
-                            ObjectNode difusion = mapper.createObjectNode();
-                            String players = gson.toJson(jugadores);
-                            difusion.put("players",players);
-                            difusion.put("sala",nombreSala);
-                            difusion.put("type","sala");
-
-                            for(Snake a : sala.getSnakes()){
-
+                            for(Snake sk : sala.getSnakes()){
                                 try {
-                                    a.getSession().sendMessage(new TextMessage(difusion.toString()));
+                                    sk.getSession().sendMessage(new TextMessage(msg));
                                 } catch (IOException ex) {
                                     Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                 }
-
                             }
-
-                    }
-
-                    if(sala.getNum() > 0){
-                        String msg = String.format("{\"type\": \"leave\", \"id\": %d}", s.getId());
-
-                        for(Snake sk : sala.getSnakes()){
-
-                            try {
-                                sk.getSession().sendMessage(new TextMessage(msg));
-                            } catch (IOException ex) {
-                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
+                        
                         }
+                        
+                    } else{
+                        
+                        if(num == 0){
+                            
+                            salas.remove(nombreSala);
+                            ObjectNode n = mapper.createObjectNode();
+                            n.put("type","quitarSala");
+                            n.put("sala",nombreSala);
+                            
+                            for(Snake sk : sessions.values()){
+                                try {
+                                    sk.getSession().sendMessage(new TextMessage(n.toString()));
+                                } catch (IOException ex) {
+                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            
+                        }
+                        
                     }
 
                 }

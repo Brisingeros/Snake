@@ -46,6 +46,25 @@ class Snake {
 	}
 }
 
+function salir(){
+
+	game.stopGameLoop();
+	//game.context.clearRect(0, 0, 640, 480);
+
+	var o = {
+
+		funcion: "salirSala",
+		params: [name]
+
+	}
+	game.socket.send(JSON.stringify(o));
+	
+	borrarDiv('#salaActual');
+	document.getElementById("partidas-container").style.display = 'block';
+	salaP = null;
+
+}
+
 class Game {
 
 	constructor(){
@@ -159,6 +178,8 @@ class Game {
 		this.draw();
 		if (this.nextFrame != null) {
 			this.nextFrame();
+		} else{
+			this.context.clearRect(0, 0, 640, 480);
 		}
 	}
 
@@ -175,24 +196,7 @@ class Game {
 		var b1 = document.createElement("button");
 		b1.textContent = "Salir";
 
-		b1.addEventListener("click", function(){
-
-			game.stopGameLoop();
-			game.context.clearRect(0, 0, 640, 480);
-			var o = {
-
-				funcion: "salirSala",
-				params: [name]
-
-			}
-			game.socket.send(JSON.stringify(o));
-			
-			borrarDiv('#salaActual');
-			document.getElementById("partidas-container").style.display = 'block';
-			salaP = null;
-			
-
-		})
+		b1.addEventListener("click", salir);
 		
 		d.appendChild(b1);
 		if(jugadores.length >= 2 && creador){
@@ -295,7 +299,8 @@ class Game {
 								document.getElementById("partidas-container").style.display = 'none';
 								this.sala(JSON.parse(packet.players),packet.sala);
 								break;
-						case 'jugar' : this.startGameLoop();
+						case 'jugar' : 
+								this.startGameLoop();
 								break;
 
 						case 'quitarSala': 
@@ -306,6 +311,12 @@ class Game {
 
 						case 'senal' :
 								Console.log(packet.contenido);
+								break;
+
+						case 'finJuego':
+								Console.log(packet.contenido);
+								salir();
+								break;
 
                     }
             }
