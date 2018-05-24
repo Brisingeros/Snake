@@ -21,11 +21,13 @@ public class Snake {
 	private Direction direction;
 
 	private final WebSocketSession session;
-
-	public Snake(int id, WebSocketSession session) {
+        private final String name;
+        
+	public Snake(int id, String name, WebSocketSession session) {
 		this.id = id;
 		this.session = session;
 		this.hexColor = SnakeUtils.getRandomHexColor();
+                this.name = name;
 		resetState();
 	}
 
@@ -118,5 +120,10 @@ public class Snake {
         public WebSocketSession getSession() {
             return session;
         }
+
+    public String getName() {
+        return name;
+    }
+        
         
 }

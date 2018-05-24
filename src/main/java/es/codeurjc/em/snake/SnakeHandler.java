@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,15 +86,23 @@ public class SnakeHandler extends TextWebSocketHandler {
             
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: ID snakeGame, param[1]: nombre player
-                    
+
                     SnakeGame sala = salas.get(params[0]);
                     Snake player = sessions.get(params[1]);
-                    
+                    System.out.println("jugador: " + params[1]);
                     sala.addSnake(player);
                     
                     try{
+                        
+                        ArrayList<String> jugadores = new ArrayList<>();
+                        for(Snake s : sala.getSnakes()){
+                        
+                            jugadores.add(s.getName());
+                        }
                         ObjectNode difusion = mapper.createObjectNode();
-                        difusion.put("name",params[1]);
+                        String players = gson.toJson(jugadores);
+                        difusion.put("players",players);
+                        difusion.put("sala",params[0]);
                         difusion.put("type","sala");
 
                         for(Snake s : sala.getSnakes()){
@@ -119,7 +128,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                         int id = snakeIds.getAndIncrement();
 
-                        Snake s = new Snake(id, session);
+                        Snake s = new Snake(id, params[0], session);
 
                         sessions.put(params[0], s);
                         session.getAttributes().put(SNAKE_ATT, s);
@@ -199,7 +208,7 @@ public class SnakeHandler extends TextWebSocketHandler {
         public ArrayList<String> getNombrePartidas(){
             
             ArrayList<String> sol = new ArrayList<>();
-            for(String s : salas.keySet()){
+            for(String s : this.salas.keySet()){
                 sol.add(s);
             }
             
@@ -208,9 +217,10 @@ public class SnakeHandler extends TextWebSocketHandler {
         }
         
         public void addGame(String name){
-            SnakeGame nuevo = new SnakeGame();
-            
-            salas.put(name, nuevo);
+
+            SnakeGame p = new SnakeGame();
+            this.salas.put(name, p);
+
         }
 
 }

@@ -19,7 +19,8 @@ public class APIRest {
     
     @RequestMapping(value = "/newGame", method = RequestMethod.POST)
     public void crearNuevaPartida(@RequestBody String nameGame){
-        handler.addGame(nameGame);
+
+        handler.addGame(gson.fromJson(nameGame, String.class));
         System.out.println("//////////////////////////////////////////NUEVO");
     }
     

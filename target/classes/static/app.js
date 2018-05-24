@@ -15,6 +15,7 @@ Console.log = (function(message) {
 });
 
 var name;
+let creador = false;
 function myFunction()
 {
 
@@ -160,6 +161,44 @@ class Game {
 		}
 	}
 
+	sala(jugadores,sala){
+		
+		var d = document.getElementById("sala");
+		borrarDiv('#sala');
+		this.context.font = "30px Verdana";
+		this.context.fillStyle = "white";
+		this.context.fillText("Sala: " + sala, 50, 50);
+		var alto = 50;
+		var b1 = document.createElement("button");
+		b1.textContent = "Salir";
+
+		b1.addEventListener("click", function(){
+
+			game.context.clearRect(0, 0, 640, 480);
+			borrarDiv('#sala');
+			$("#partidas-container").children().prop('disabled',false);
+			//ENVIAR MENSAJE AL WEBSOCKET DE QUE SE HA IDO UN JUGADOR DE LA PARTIDA
+
+		})
+		
+		d.appendChild(b1);
+		if(jugadores.length >= 2 && creador){
+
+			var b2 = document.createElement("button");
+			b2.textContent = "Comenzar juego";
+			d.appendChild(b2);
+
+		}
+
+		var inc = 0;
+		for(var i = 0; i < jugadores.length; i++){
+
+			inc += 50;
+			this.context.fillText(jugadores[i], 50, alto + inc);
+
+		}
+	
+	}
 
 	connect() {
 
@@ -179,7 +218,6 @@ class Game {
                     
                     }
                     this.socket.send(JSON.stringify(newSnake));
-                    this.startGameLoop();
                     var ping = {
                         funcion: "ping",
                         params:[""]
@@ -206,7 +244,8 @@ class Game {
                         case 'join':
                                 for (var j = 0; j < packet.data.length; j++) {
                                         this.addSnake(packet.data[j].id, packet.data[j].color);
-                                }
+								}
+								sala(packet.name);
                                 break;
                         case 'leave':
                                 this.removeSnake(packet.id);
@@ -226,8 +265,12 @@ class Game {
                                 else
                                     color = 'red';
 								Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
-						
-						case 'sala' : sala(packet.name);
+								break;
+						case 'sala' :
+								$("#partidas-container").children().prop('disabled',true);
+								this.sala(JSON.parse(packet.players),packet.sala);
+								break;
+						case 'jugar' : this.startGameLoop();
 
                     }
             }
@@ -268,12 +311,13 @@ $(document).ready(function(){
 		}).done(function(data){
 
 			console.log("Creada partida: " + p);
+			creador = true;
 			partidas();
 			
 		});
 
     });
-    $('#actualizar-btn').click(partidas());
+	$('#actualizar-btn').click(partidas());
     
 })
 
@@ -286,12 +330,12 @@ function partidas(){
 
     }).done(function(data){
         
-		borrarDiv();
+		borrarDiv('#partidas');
 
 		var partidas = JSON.parse(data);
 		for(var i = 0; i < partidas.length; i++){
 
-			crearDiv(JSON.parse(partidas[i])); //para que salga sin comillas parseamos (otra vez)
+			crearDiv(partidas[i]); //para que salga sin comillas parseamos (otra vez)
 
 		}
     
@@ -299,9 +343,9 @@ function partidas(){
 
 }
 
-function borrarDiv(){
+function borrarDiv(id){
     
-    $('#partidas').empty();
+    $(id).empty();
     
 }
 
@@ -329,14 +373,6 @@ function crearDiv(nombreP){
 
 }
 
-function sala(jugador){
-
-	var j = document.createElement("p");
-	p.innerHTML = JSON.parse(jugador);
-	p.style.color = "white";
-	$('#jugadores').appendChild(j);
-
-}
 game = new Game();
 
 game.initialize()

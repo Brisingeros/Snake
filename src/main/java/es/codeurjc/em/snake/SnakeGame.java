@@ -11,8 +11,8 @@ public class SnakeGame {
 
 	private final static long TICK_DELAY = 100;
 
-	private ConcurrentHashMap<Integer, Snake> snakes = new ConcurrentHashMap<>();
-	private AtomicInteger numSnakes = new AtomicInteger(); //Hacer que sólo se juegue cuando hayan 2 jugadores o más
+	private ConcurrentHashMap<Integer, Snake> snakes; 
+	private AtomicInteger numSnakes; //Hacer que sólo se juegue cuando hayan 2 jugadores o más
         //Si sólo hay un jugador, joder la partida
         
         //Dificultad y modo tiene que ir aquí. How? Futuro
@@ -20,6 +20,12 @@ public class SnakeGame {
 
 	private ScheduledExecutorService scheduler;
 
+        public SnakeGame(){
+        
+            snakes = new ConcurrentHashMap<>();
+            numSnakes = new AtomicInteger();
+            
+        }
 	public void addSnake(Snake snake) {
 
 		snakes.put(snake.getId(), snake);
