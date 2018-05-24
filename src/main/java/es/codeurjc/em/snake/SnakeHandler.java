@@ -40,12 +40,13 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             this.Funciones.put("Chat", new Function(){
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) {
+                public void ExecuteAction(String[] params, WebSocketSession session) { //Params: nombre, mensaje
                     try{
                         
                         ObjectNode difusion = mapper.createObjectNode();
-                        Key newKey = new Key(params[0], session.toString());
-                        Snake sn = sessions.get(newKey);
+                        
+                        Snake sn = (Snake) session.getAttributes().get(SNAKE_ATT);
+                        
                         difusion.put("name",params[0]);
                         difusion.put("enPartida",sn.isInGame());
                         difusion.put("mensaje",params[1]);
@@ -84,32 +85,34 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             });
             this.Funciones.put("salirSala",new Function(){ //salir de la sala: eliminamos de la sala el jugador. Si hay 0 jugadores al final, se elimina la sala
-                                                            //Params: NombreUsuario, /////////////si está en partida, nombreSala
+                                                            //Params: //////////////NombreUsuario, /////////////si está en partida, nombreSala
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
-                    Key newKey = new Key(params[0], session.toString());
-                    Snake s = sessions.get(newKey);
+                    Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
                     s.setInGame(false);
-                    SnakeGame sala = salas.get(session.getAttributes().get(SALA_ATT));
+                    String nombreSala = (String) session.getAttributes().get(SALA_ATT);
+                    
+                    SnakeGame sala = salas.get(nombreSala);
                     sala.removeSnake(s);
-                    
+
                     session.getAttributes().replace(SALA_ATT, "none");
-                    
+
                     s.resetState();
+                    
                     if(sala.getNum() == 0 || (sala.getNum() == 1 && sala.isInGame())){
-                        salas.remove(params[2]);
+                        salas.remove(nombreSala);
                         ObjectNode n = mapper.createObjectNode();
                         n.put("type","quitarSala");
-                        n.put("sala",params[2]);
+                        n.put("sala",nombreSala);
                         for(Snake sk : sessions.values()){
-                            
+
                             try {
                                 sk.getSession().sendMessage(new TextMessage(n.toString()));
                             } catch (IOException ex) {
                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        
+
                         }
                     } else if(!sala.isInGame()){
 
@@ -121,7 +124,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                             ObjectNode difusion = mapper.createObjectNode();
                             String players = gson.toJson(jugadores);
                             difusion.put("players",players);
-                            difusion.put("sala",params[2]);
+                            difusion.put("sala",nombreSala);
                             difusion.put("type","sala");
 
                             for(Snake a : sala.getSnakes()){
@@ -133,35 +136,38 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 }
 
                             }
-                        
-                    }
-                    
-                    String msg = String.format("{\"type\": \"leave\", \"id\": %d}", s.getId());
-                           
-                    for(Snake sk : sala.getSnakes()){
 
-                        try {
-                            sk.getSession().sendMessage(new TextMessage(msg));
-                        } catch (IOException ex) {
-                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    if(sala.getNum() > 0){
+                        String msg = String.format("{\"type\": \"leave\", \"id\": %d}", s.getId());
+
+                        for(Snake sk : sala.getSnakes()){
+
+                            try {
+                                sk.getSession().sendMessage(new TextMessage(msg));
+                            } catch (IOException ex) {
+                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
                         }
-
                     }
-                    
+
                 }
             
             });
             this.Funciones.put("unirGame", new Function(){
             
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: ID snakeGame, param[1]: nombre player
+                public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: ID snakeGame, //////////////param[1]: nombre player
 
                     SnakeGame sala = salas.get(params[0]);
-                    Key newKey = new Key(params[1], session.toString());
-                    Snake player = sessions.get(newKey);
-                    player.setInGame(true);
-                    System.out.println("jugador: " + params[1]);
-                    sala.addSnake(player);
+                    Snake ss = (Snake) session.getAttributes().get(SNAKE_ATT);
+                    //Key newKey = new Key(ss.getName(), session.toString());
+                    //Snake player = sessions.get(newKey);
+                    ss.setInGame(true);
+                    //System.out.println("jugador: " + params[1]);
+                    sala.addSnake(ss);
                     
                     session.getAttributes().replace(SALA_ATT, params[0]);
                     
@@ -217,20 +223,6 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                         sessions.put(newKey, s);
                         session.getAttributes().put(SNAKE_ATT, s);
-
-                        /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        snakeGame.addSnake(s);
-
-                        StringBuilder sb = new StringBuilder();
-                        for (Snake snake : snakeGame.getSnakes()) {
-                            sb.append(String.format("{\"id\": %d, \"color\": \"%s\"}", snake.getId(), snake.getHexColor()));
-                            sb.append(',');
-                        }
-                        sb.deleteCharAt(sb.length()-1);
-                        String msg = String.format("{\"type\": \"join\",\"data\":[%s]}", sb.toString());
-
-                        snakeGame.broadcast(msg);
-                        */
                         
                     } catch (Exception ex) {
                         Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -265,9 +257,9 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.Funciones.put("matchMaking",new Function(){
                 
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) {  //Params: nombrePlayer
+                public void ExecuteAction(String[] params, WebSocketSession session) {  //Params: ///////////nombrePlayer
                     
-                    String[] para = {"none", params[0]};
+                    String[] para = {"none"};
                     
                     for(String s : salas.keySet()){
                         

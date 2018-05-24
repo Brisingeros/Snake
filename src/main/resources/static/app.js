@@ -177,13 +177,12 @@ class Game {
 
 		b1.addEventListener("click", function(){
 
-			enPartida = false;
 			game.stopGameLoop();
 			game.context.clearRect(0, 0, 640, 480);
 			var o = {
 
 				funcion: "salirSala",
-				params: [name,enPartida,salaP]
+				params: [name]
 
 			}
 			game.socket.send(JSON.stringify(o));
