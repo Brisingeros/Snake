@@ -85,13 +85,14 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             });
             this.Funciones.put("salirSala",new Function(){ //salir de la sala: eliminamos de la sala el jugador. Si hay 0 jugadores al final, se elimina la sala
+                                                            //Params: NombreUsuario, /////////////si está en partida, nombreSala
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
                     Key newKey = new Key(params[0], session.toString());
                     Snake s = sessions.get(newKey);
-                    s.setInGame(Boolean.getBoolean(params[1]));
-                    SnakeGame sala = salas.get(params[2]);
+                    s.setInGame(false);
+                    SnakeGame sala = salas.get(session.getAttributes().get(SALA_ATT));
                     sala.removeSnake(s);
                     
                     session.getAttributes().replace(SALA_ATT, "none");
@@ -138,7 +139,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     String msg = String.format("{\"type\": \"leave\", \"id\": %d}", s.getId());
                            
-                    for(Snake sk : salas.get(params[2]).getSnakes()){
+                    for(Snake sk : sala.getSnakes()){
 
                         try {
                             sk.getSession().sendMessage(new TextMessage(msg));
@@ -337,6 +338,7 @@ public class SnakeHandler extends TextWebSocketHandler {
         
         
         }
+        
         public ArrayList<String> getNombrePartidas(){
             
             ArrayList<String> sol = new ArrayList<>();

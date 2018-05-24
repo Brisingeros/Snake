@@ -1,5 +1,7 @@
 package es.codeurjc.em.snake;
 
+import java.util.Objects;
+
 /**
  *
  * @author Brisin
@@ -31,13 +33,20 @@ public class Key {
         
         Key key = (Key) o;
         
-        if(key.getK1() == this.getK1()){
+        if(key.getK1().equals(this.getK1())){
             return true;
-        } else if(key.getK2() == this.getK2()){
+        } else if(key.getK2().equals(this.getK2())){
             return true;
         }else{
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.k2);
+        return hash;
     }
     
     
