@@ -2,20 +2,33 @@
 	width: 640px;
 	height: 480px;
 	background-color: #000;
+	position: static;
+	display: inline-block;
 }
 
 #console-container {
-	float: left;
+	position: absolute;
+	z-index: -1;
+	justify-content: center;
+	align-items: center;
 	margin-left: 15px;
 	width: 300px;
+	display: inline-block;
 }
 
+#selector{
+
+	background-color: rgb(255, 255, 255);
+	z-index: 100;
+
+}
 #console {
 	border: 1px solid #CCCCCC;
 	border-right-color: #999999;
 	border-bottom-color: #999999;
 	height: 480px;
 	overflow-y: scroll;
+	display: inline-block;
 	padding-left: 5px;
 	padding-right: 5px;
 	width: 100%;
@@ -28,12 +41,14 @@
 
 #partidas-container{
 
+	align-items: center;
+	position: relative;
+	display: inline-block;
 	border: 1px solid #CCCCCC;
 	border-right-color: #999999;
 	border-bottom-color: #999999;
 	height: 480px;
 	overflow-y: scroll;
-	padding-left: 10px;
 	padding-right: 10px;
 	width: 30%;
 

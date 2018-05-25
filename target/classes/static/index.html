@@ -6,27 +6,32 @@
 <title>Multiplayer Snake</title>
 <link rel="stylesheet" href="style.css"></link>
 </head>
-<body>
-	
-	<div style="float: left">
-		
-		<canvas id="playground" width="640" height="480"></canvas>
-		<div id="salaActual"></div>
-	</div>
-	<div id="console-container">
-        <div id="console"></div>
-                
-        <input type="text" name="message" id="message" placeholder="Message" maxlength="80" style="width: 60%" />
-        <button id="send-btn">Send</button>
-	</div>
-    <div id="partidas-container" style="align-items: center">
+<body style="text-align: center">
 
+	
+	<div id="partidas-container" style="align-items: center">
+			
 		<button id = "buscar-btn">Buscar sala</button>
 		<button id = "crear-btn">Crear sala</button>
-                <button id = "actualizar-btn">Actualizar</button>
+		<button id = "actualizar-btn">Actualizar</button>
 
 		<div id="partidas" style="margin-top:50 px"></div>
+		<fieldset id = "selector" style="display:none"> </fieldset>
 	</div>
+	<div style="float: left" >
+		
+		<canvas id="playground" width="640" height="480"></canvas>
+		<div id="salaActual" style="display:block;position:absolute"></div>
+	</div>
+	
+	<div id="console-container">
+		
+		<div id="console"></div>
+			
+		<input type="text" name="message" id="message" placeholder="Message" maxlength="80" style="width: 60%" />
+		<button id="send-btn">Send</button>
+	</div>
+    	
 	<script src="app.js"></script>
 
 </body>

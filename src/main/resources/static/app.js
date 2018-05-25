@@ -48,9 +48,7 @@ class Snake {
 
 function salir(){
 
-	game.stopGameLoop();
-	//game.context.clearRect(0, 0, 640, 480);
-
+	game.context.clearRect(0, 0, 640, 480);
 	var o = {
 
 		funcion: "salirSala",
@@ -60,7 +58,7 @@ function salir(){
 	game.socket.send(JSON.stringify(o));
 	
 	borrarDiv('#salaActual');
-	document.getElementById("partidas-container").style.display = 'block';
+	document.getElementById("partidas-container").style.display = 'inline-block';
 	salaP = null;
 
 }
@@ -268,7 +266,7 @@ class Game {
                         case 'update':
                                 for (var i = 0; i < packet.data.length; i++) {
                                         this.updateSnake(packet.data[i].id, packet.data[i].body);
-                                }                                
+                                }
                                 break;
                         case 'join':
                                 for (var j = 0; j < packet.data.length; j++) {
@@ -305,8 +303,12 @@ class Game {
 
 						case 'quitarSala': 
 								//eliminamos el div de la partida porque se han salido todos los jugadores
+								//Console.log(packet.sala);
+
 								var node = document.getElementById(packet.sala);
-								node.parentNode.removeChild(node);
+								if(node !== null){
+									node.parentNode.removeChild(node);
+								}
 								break;
 
 						case 'senal' :
@@ -324,6 +326,105 @@ class Game {
 	}
 }
 
+function post(d){
+
+	document.getElementById("selector").style.display = 'none';
+	var ob = {
+		
+		name: salaP,
+		dif: d
+
+	}
+	$.ajax({
+
+		method: "POST",
+		url: "http://" + window.location.host + "/newGame",
+		data: JSON.stringify(ob),
+		processData: false,
+		headers: {
+
+			"Content-type":"application/json"
+
+		}
+	}).done(function(data){
+
+		console.log("Creada partida: " + salaP);
+		creador = true;
+		partidas();
+		
+	});
+
+}
+
+function buscar(dif){
+	
+	document.getElementById("selector").style.display = 'none';
+	var o = {
+		
+		funcion: "matchMaking",
+		params:[dif] //PASAR LA DIFICULTAD
+
+	}
+
+	game.socket.send(JSON.stringify(o));
+
+}
+function selector(funcion){
+
+	var dificultad; //facil:1,medio:2,dificil:4
+	var sel = document.getElementById("selector");
+	borrarDiv('#selector');
+	sel.style.display = 'inline-flex';
+	var p1 = document.createElement('p');
+	p1.innerHTML = "SELECCIONE UNA DIFICULTAD";
+	sel.appendChild(p1);
+	var p2 = document.createElement('p');
+	var facil = document.createElement('button');
+	facil.textContent = "FÁCIL";
+	facil.id = "f";
+	facil.addEventListener("click",function(){
+
+		dificultad = 1
+		if(funcion=="post")
+			post(dificultad);
+		else
+			buscar(dificultad);
+	});
+	p2.appendChild(facil);
+	sel.appendChild(p2);
+	
+	var p3 = document.createElement('p');
+	var medio = document.createElement('button');
+	medio.textContent = "NORMAL";
+	medio.id = "m";
+	medio.addEventListener("click",function(){
+
+		dificultad = 2
+		if(funcion=="post")
+			post(dificultad);
+		else
+			buscar(dificultad);
+	});
+	p3.appendChild(medio);
+	sel.appendChild(p3);
+	var p4 = document.createElement('p');
+	var dificil = document.createElement('button');
+	dificil.textContent = "DIFÍCIL";
+	dificil.id = "d";
+	dificil.addEventListener("click",function(){
+
+		dificultad = 4
+		if(funcion=="post")
+			post(dificultad);
+		else
+			buscar(dificultad);
+	});
+	p4.appendChild(dificil);
+	sel.appendChild(p4);
+
+}
+
+
 $(document).ready(function(){
     $('#send-btn').click(function() {
         var object = {
@@ -336,32 +437,16 @@ $(document).ready(function(){
     });
     $('#crear-btn').click(function(nombrePartida) {
 		var p;
-
+		
 		do{
 
 			p =prompt("Inserta el nombre de la sala","Nombre");
 
 		}while(p =="Nombre");
 
-		$.ajax({
-
-			method: "POST",
-			url: "http://" + window.location.host + "/newGame",
-			data: JSON.stringify(p),
-			processData: false,
-			headers: {
-
-				"Content-type":"application/json"
-
-			}
-		}).done(function(data){
-
-			console.log("Creada partida: " + p);
-			creador = true;
-			partidas();
-			
-		});
-
+		salaP = p;
+		selector("post");
+		
     });
 	$('#actualizar-btn').click(function(){
 		
@@ -370,14 +455,8 @@ $(document).ready(function(){
 
 	$('#buscar-btn').click(function(){
 		
-		var o = {
-
-			funcion: "matchMaking",
-			params:[name]
-
-		}
-
-		game.socket.send(JSON.stringify(o));
+		selector();
+		
 	});
     
 })
@@ -410,11 +489,12 @@ function borrarDiv(id){
     
 }
 
-function crearDiv(nombreP){
+function crearDiv(info){
 
+	//info = JSON.parse(info);
 	var newDiv = document.createElement("div"); 
-	newDiv.id = nombreP;
-	var newContent = document.createTextNode(nombreP + "  "); 
+	newDiv.id = info[0];					//Id = nombreSala
+	var newContent = document.createTextNode(info[0] + "     " + info[1] + "/4        " + info[2]); 
 	newDiv.appendChild(newContent); //añade texto al div creado. 
 	var boton = document.createElement("button");
 	boton.type = "button";
@@ -424,12 +504,12 @@ function crearDiv(nombreP){
 	boton.addEventListener("click", function(){	
 		var part = {
             funcion: "unirGame",
-            params:[nombreP,name]
+            params:[info[0],name]
         }
 
         game.socket.send(JSON.stringify(part));
 	},false);
-	salaP = nombreP;
+	salaP = info[0];
 	newDiv.appendChild(boton);
 
 	$('#partidas').append(newDiv);
