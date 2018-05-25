@@ -312,6 +312,19 @@ public class SnakeHandler extends TextWebSocketHandler {
                             sessions.put(newKey, s);
                             session.getAttributes().put(SNAKE_ATT, s);
                             
+                            //Mensaje conexión
+                            ObjectNode difusion = mapper.createObjectNode();
+                            difusion.put("type","jugadorConecta");
+                            difusion.put("name", s.getName());
+                            
+                            for(Snake snk : sessions.values()){
+                                try {
+                                    snk.sendMessage(difusion.toString());
+                                } catch (Exception ex) {
+                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            
                         }
                     
                 }            
@@ -430,10 +443,24 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                 }
                 
+                //Mensaje desconexión
+                ObjectNode difusion = mapper.createObjectNode();
+                difusion.put("type","jugadorDesconecta");
+                difusion.put("name", snek.getName());
+                
                 //Quitamos la serpiente de sesiones
                 Key newKey = new Key("placeholder", session.toString());
                 sessions.remove(newKey);
-            
+
+                //Mandamos mensaje
+                for(Snake snk : sessions.values()){
+                    try {
+                        snk.sendMessage(difusion.toString());
+                    } catch (Exception ex) {
+                        Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
 	}
         
         public ArrayList<String[]> getNombrePartidas(){
