@@ -8,17 +8,18 @@ import java.util.Collection;
  */
 public class Comida {
     
-    private int posX;
-    private int posY;
+    private Location pos;
+    private String color;
     
-    public Comida(int x, int y){
-        this.posX = x;
-        this.posY  = y;
+    
+    public Comida(){
+        this.pos = SnakeUtils.getRandomLocation();
+        this.color = SnakeUtils.getRandomHexColor();
     }
     
     public Snake update(Collection<Snake> sneks){
         for(Snake s : sneks){
-            if(s.getHead().x == this.posX && s.getHead().y == this.posY){
+            if(s.getHead().x == this.pos.x && s.getHead().y == this.pos.y){
                 return s;
             }
         }
@@ -27,19 +28,15 @@ public class Comida {
     }
 
     public int getPosX() {
-        return posX;
-    }
-
-    public void setPosX(int posX) {
-        this.posX = posX;
+        return pos.x;
     }
 
     public int getPosY() {
-        return posY;
+        return pos.y;
     }
 
-    public void setPosY(int posY) {
-        this.posY = posY;
+    public String getColor() {
+        return color;
     }
     
     

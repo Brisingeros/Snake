@@ -2,6 +2,7 @@ package es.codeurjc.em.snake;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +31,8 @@ public class SnakeGame {
 	private ScheduledExecutorService scheduler;
         
         private Comida food;
-
+        private Gson gson = new Gson();
+        
         public SnakeGame(long dif){
         
             snakes = new ConcurrentHashMap<>();
@@ -86,21 +88,28 @@ public class SnakeGame {
                         Snake come = food.update(getSnakes());
                         
                         if(come != null){
-                            food = new Comida(rnd.nextInt(640), rnd.nextInt(480));
+                            food = new Comida();
                             
                             //Mandarle puntos a esa serpiente
                             ObjectNode n = mapper.createObjectNode();
                             n.put("type","sumaPuntos");
-                            
-                            come.sendMessage(n.toString());
+                            n.put("id",come.getId());
+                            n.put("puntos",10);
+                            broadcast(n.toString());
                         }
                         
                         //Hacer un stringBuilder de comida
                         StringBuilder fb = new StringBuilder();
-                        fb.append(food.getPosX() + ',' + food.getPosY());
+                        fb.append(food.getPosX());
+                        fb.append(',');
+                        fb.append(food.getPosY());
+                        fb.append(',');
+                        fb.append('\"');
+                        fb.append(food.getColor());
+                        fb.append('\"');
                         
                         //Modificar para mandar ambos
-			String msg = String.format("{\"type\": \"update\", \"data\" : [%s], \"food\" : %s}", sb.toString(), fb.toString());
+			String msg = String.format("{\"type\":\"update\",\"data\":[%s],\"food\":[%s]}", sb.toString(), fb.toString());
 
 			broadcast(msg);
 
@@ -145,7 +154,7 @@ public class SnakeGame {
 
 	public void startTimer() {
             
-            food = new Comida(rnd.nextInt(640), rnd.nextInt(480));
+            food = new Comida();
             
 		scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);

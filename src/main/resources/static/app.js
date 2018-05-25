@@ -31,7 +31,7 @@ function myFunction()
         params: [name]
     
     }
-    this.socket.send(JSON.stringify(newSnake));
+    game.socket.send(JSON.stringify(newSnake));
 
 }
 
@@ -43,6 +43,8 @@ class Snake {
 	constructor() {
 		this.snakeBody = [];
 		this.color = null;
+		this.puntos = 0;
+
 	}
 
 	draw(context) {
@@ -70,6 +72,19 @@ function salir(){
 	salaP = null;
 
 }
+class Food {
+	constructor () {
+		this.x =-1;
+		this.y=-1;
+		this.color= null;
+	}
+	
+	draw (context){
+		
+		context.fillStyle = this.color;
+		context.fillRect (this.x,this.y,game.gridSize,game.gridSize);
+	}
+}
 
 class Game {
 
@@ -89,6 +104,7 @@ class Game {
 	initialize() {	
 	
 		this.snakes = [];
+		this.food = new Food();
 		let canvas = document.getElementById('playground');
 		if (!canvas.getContext) {
 			Console.log('Error: 2d canvas not supported by this browser.');
@@ -157,8 +173,16 @@ class Game {
 		for (var id in this.snakes) {			
 			this.snakes[id].draw(this.context);
 		}
+		this.food.draw(this.context);
 	}
 
+	updateFood (x,y,color){
+
+		this.food.x=x;
+		this.food.y=y;
+		this.food.color= color;
+
+	}
 	addSnake(id, color) {
 		this.snakes[id] = new Snake();
 		this.snakes[id].color = color;
@@ -187,6 +211,12 @@ class Game {
 		} else{
 			this.context.clearRect(0, 0, 640, 480);
 		}
+	}
+
+	updatePuntos(id,ptos){
+
+		this.snakes[id].puntos += ptos;
+
 	}
 
 	sala(jugadores,sala){
@@ -268,7 +298,10 @@ class Game {
                         case 'update':
                                 for (var i = 0; i < packet.data.length; i++) {
                                         this.updateSnake(packet.data[i].id, packet.data[i].body);
-                                }
+								}
+								//Console.log("Comida en: " + packet.food[0] + "," + packet.food[1]);
+								this.updateFood(packet.food[0], packet.food[1], packet.food[2]);
+								
                                 break;
                         case 'join':
                                 for (var j = 0; j < packet.data.length; j++) {
@@ -324,6 +357,11 @@ class Game {
 
 						case 'falloNombre':
 								myFunction();
+								break;
+						
+						case 'sumaPuntos': 
+								this.updatePuntos(packet.id,packet.puntos);
+								Console.log("Puntos: " + this.snakes[packet.id].puntos);
 								break;
 
                     }
@@ -499,8 +537,9 @@ function crearDiv(info){
 
 	//info = JSON.parse(info);
 	var newDiv = document.createElement("div"); 
+	var d = info[2]==1?"fácil":info[2]==2?"normal":"dificil";
 	newDiv.id = info[0];					//Id = nombreSala
-	var newContent = document.createTextNode(info[0] + "     " + info[1] + "/4        " + info[2]); 
+	var newContent = document.createTextNode(info[0] + "     " + info[1] + "/4        " + d); 
 	newDiv.appendChild(newContent); //añade texto al div creado. 
 	var boton = document.createElement("button");
 	boton.type = "button";
