@@ -58,7 +58,10 @@ class Snake {
 
 function salir(){
 
-	game.context.clearRect(0, 0, 640, 480);
+	//game.context.clearRect(0, 0, 640, 480);
+	
+	game.stopGameLoop();
+
 	var o = {
 
 		funcion: "salirSala",

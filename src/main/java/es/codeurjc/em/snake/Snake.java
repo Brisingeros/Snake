@@ -48,7 +48,7 @@ public class Snake {
 	}
 
 	private synchronized void reward() throws Exception {
-		this.length++;
+		//this.length++;
 		sendMessage("{\"type\": \"kill\"}");
 	}
 
@@ -135,6 +135,10 @@ public class Snake {
 
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
+    }
+    
+    public void aumLength(){
+        this.length++;
     }
         
         

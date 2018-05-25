@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SnakeGame {
     
@@ -156,14 +158,27 @@ public class SnakeGame {
             
             food = new Comida();
             
-		scheduler = Executors.newScheduledThreadPool(1);
+		scheduler = Executors.newScheduledThreadPool(2);
 		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);
+                scheduler.schedule(() -> stopTimer(), 3, TimeUnit.MINUTES);
 	}
 
 	public void stopTimer() {
-		if (scheduler != null) {
-			scheduler.shutdown();
-		}
+            
+            try {
+                if (scheduler != null) {
+                    scheduler.shutdown();
+                }
+                
+                //Avisa a los js que ha acabado la partida
+                ObjectNode n = mapper.createObjectNode();
+                n.put("type","finPartida");
+                broadcast(n.toString());
+                
+            } catch (Exception ex) {
+                Logger.getLogger(SnakeGame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
 	}
         
         ///////////////////////////////////////////////////////////////////////////////////////////////////

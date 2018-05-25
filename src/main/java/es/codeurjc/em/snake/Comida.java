@@ -20,6 +20,8 @@ public class Comida {
     public Snake update(Collection<Snake> sneks){
         for(Snake s : sneks){
             if(s.getHead().x == this.pos.x && s.getHead().y == this.pos.y){
+                s.aumLength(); //Aumentar tamaño serpiente al comer
+                
                 return s;
             }
         }
