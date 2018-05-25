@@ -3,6 +3,7 @@ package es.codeurjc.em.snake;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,9 +50,10 @@ public class SnakeGame {
 
 		int count = numSnakes.getAndIncrement();
 
+                /*
 		if (count == 0) {
 			startTimer();
-		}
+		}*/
 	}
 
 	public Collection<Snake> getSnakes() {
@@ -174,8 +176,14 @@ public class SnakeGame {
                 
                 this.inGame = false;
                 //Avisa a los js que ha acabado la partida
+                String[] aux = this.getMayorPuntuacion();
+                
+                SnakeHandler.addPunto(aux);
+                
                 ObjectNode n = mapper.createObjectNode();
                 n.put("type","finPartida");
+                n.put("ganador", aux[0]);
+                n.put("ganador", aux[1]);
                 broadcast(n.toString());
                 
             } catch (Exception ex) {
@@ -202,5 +210,25 @@ public class SnakeGame {
             this.inGame = inGame;
         }
         
+        public String[] getMayorPuntuacion(){
+            
+            String[] aux = new String[2];
+            int pts = 0;
+            
+            for(Snake s : this.getSnakes()){
+                
+                if(s.getPuntos() > pts){
+                    pts = s.getPuntos();
+                    
+                    aux[0] = s.getName();
+                    aux[1] = Integer.toString(pts);
+                }
+                
+            }
+            
+            return aux;
+            
+        }
+
         
 }

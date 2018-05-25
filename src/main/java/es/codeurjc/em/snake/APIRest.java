@@ -19,7 +19,7 @@ public class APIRest {
     
     private final ObjectMapper mapper = new ObjectMapper();
     
-    private CopyOnWriteArrayList<Puntos> puntuaciones = new CopyOnWriteArrayList<>();
+    
     
     public static void setSnakeHandler(SnakeHandler hand){
         handler = hand;
@@ -47,16 +47,12 @@ public class APIRest {
         
     }
     
-    @RequestMapping(value = "/sendPuntos", method = RequestMethod.POST)
-    public void nuevosPuntos(@RequestBody String pts){
-
-        Puntos nuevos = gson.fromJson(pts, Puntos.class);
+    @RequestMapping(value = "/muroPuntos", method = RequestMethod.GET)
+    public String getMuroPuntos(){
         
-        puntuaciones.add(nuevos);
-        Collections.sort(puntuaciones, (Puntos o1, Puntos o2) -> {
-                return (o1.getPunts() > o2.getPunts())? 1:-1; });
+        CopyOnWriteArrayList<String[]> aux = handler.getMuro();
         
-        puntuaciones = (CopyOnWriteArrayList) puntuaciones.subList(0, 10);
+        return gson.toJson(aux);
         
     }
     

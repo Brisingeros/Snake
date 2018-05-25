@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,6 +23,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public class SnakeHandler extends TextWebSocketHandler {
+    
+    private static CopyOnWriteArrayList<String[]> puntuaciones = new CopyOnWriteArrayList<>();
     
         private static final Executor executor = Executors.newCachedThreadPool();
 
@@ -266,7 +269,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 } catch (InterruptedException ex) {
                                     Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                 } catch (IOException ex) {
-                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             
                             }
@@ -323,6 +326,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     try {
                         SnakeGame sala = salas.get(params[0]);
                         sala.setInGame(true);
+                        sala.startTimer();
                         ObjectNode n = mapper.createObjectNode();
                         n.put("type","jugar");
                         
@@ -455,6 +459,32 @@ public class SnakeHandler extends TextWebSocketHandler {
             SnakeGame p = new SnakeGame(dif);
             this.salas.put(name, p);
 
+        }
+        
+        public static CopyOnWriteArrayList<String[]> getMuro(){
+            return puntuaciones;
+        }
+        
+        public static void addPunto(String[] nP){
+            
+            puntuaciones.add(nP);
+            
+            Collections.sort(puntuaciones, new Comparator(){
+                
+                public int compare(Object o1, Object o2) {
+                    String[] aux = (String[])o1;
+                    int p1 = Integer.parseInt(aux[1]);
+                
+                    aux = (String[])o2;
+                    int p2 = Integer.parseInt(aux[1]);
+                    
+                    return (p1 > p2) ? 1:-1;
+                }
+            
+            });
+            
+            puntuaciones = (CopyOnWriteArrayList<String[]>) puntuaciones.subList(0, 10);
+            
         }
 
 }
