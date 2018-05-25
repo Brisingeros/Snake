@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -163,15 +165,13 @@ public class SnakeHandler extends TextWebSocketHandler {
                             n.put("sala",nombreSala);
                             
                             for(Snake sk : sessions.values()){
-                                try {
                                     synchronized(sk){
-                                        sk.sendMessage(n.toString());
+                                        try {
+                                            sk.sendMessage(n.toString());
+                                        } catch (Exception ex) {
+                                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
                                     }
-                                } catch (IOException ex) {
-                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                                } catch (Exception ex) {
-                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                                }
                             }
                             
                         }
@@ -185,80 +185,91 @@ public class SnakeHandler extends TextWebSocketHandler {
             
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: ID snakeGame, //////////////param[1]: nombre player
-
-                    Thread act = Thread.currentThread();
-                    
-                    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                    scheduler.schedule(()-> {
-                        if(act.isAlive()){
-                            act.interrupt();
-                        }
-                        }, 5000, TimeUnit.MILLISECONDS);
                     
                     boolean entra = false;
+                    Semaphore sem = new Semaphore(0);
                     
                     while(!entra){
-
-                        try{
-                            
-                            SnakeGame sala = salas.get(params[0]);
+                        
+                        SnakeGame sala = salas.get(params[0]);
                             
                             if(sala.getNum() < 4){
-                                entra = true;
-                            
-                                Snake ss = (Snake) session.getAttributes().get(SNAKE_ATT);
-                                ss.setInGame(true);
-                                sala.addSnake(ss);
+                                try {
+                                    entra = true;
 
-                                session.getAttributes().replace(SALA_ATT, params[0]);
+                                    Snake ss = (Snake) session.getAttributes().get(SNAKE_ATT);
+                                    ss.setInGame(true);
+                                    sala.addSnake(ss);
 
-                                ArrayList<String> jugadores = new ArrayList<>();
-                                for(Snake s : sala.getSnakes()){
+                                    session.getAttributes().replace(SALA_ATT, params[0]);
 
-                                    jugadores.add(s.getName());
+                                    ArrayList<String> jugadores = new ArrayList<>();
+                                    for(Snake s : sala.getSnakes()){
+
+                                        jugadores.add(s.getName());
+                                    }
+                                    ObjectNode difusion = mapper.createObjectNode();
+                                    String players = gson.toJson(jugadores);
+                                    difusion.put("players",players);
+                                    difusion.put("sala",params[0]);
+                                    difusion.put("type","sala");
+
+                                    sala.broadcast(difusion.toString());
+                                    
+                                    if(sala.isInGame()){
+                                        ObjectNode n = mapper.createObjectNode();
+                                        n.put("type","jugar");
+                                        session.sendMessage(new TextMessage(n.toString()));
+                                    }
+
+                                    StringBuilder sb = new StringBuilder();
+                                    for (Snake snake : sala.getSnakes()) {
+                                        sb.append(String.format("{\"id\": %d, \"color\": \"%s\"}", snake.getId(), snake.getHexColor()));
+                                        sb.append(',');
+                                    }
+                                    sb.deleteCharAt(sb.length()-1);
+                                    String msg = String.format("{\"type\": \"join\",\"data\":[%s]}", sb.toString());
+                                    sala.broadcast(msg);
+                                    
+                                    if(sala.getNum() == 4){
+                                        
+                                        ObjectNode n = mapper.createObjectNode();
+                                        n.put("type","jugar");
+                                        sala.broadcast(n.toString());
+                                        
+                                    }
+                                    
+                                    
+                                    
+                                } catch (Exception ex) {
+                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                 }
-                                ObjectNode difusion = mapper.createObjectNode();
-                                String players = gson.toJson(jugadores);
-                                difusion.put("players",players);
-                                difusion.put("sala",params[0]);
-                                difusion.put("type","sala");
-
-                                sala.broadcast(difusion.toString());
-
-                                StringBuilder sb = new StringBuilder();
-                                for (Snake snake : sala.getSnakes()) {
-                                    sb.append(String.format("{\"id\": %d, \"color\": \"%s\"}", snake.getId(), snake.getHexColor()));
-                                    sb.append(',');
-                                }
-                                sb.deleteCharAt(sb.length()-1);
-                                String msg = String.format("{\"type\": \"join\",\"data\":[%s]}", sb.toString());
-                                sala.broadcast(msg);
                                 
                             } else{
-                                if(act.isInterrupted()){
-                                    entra = true;
-                                    
-                                    try {
-                            
+                                
+                                try {
+                                    if(sem.tryAcquire(5, 1000, TimeUnit.MILLISECONDS)){
+                                        
                                         ObjectNode difusion = mapper.createObjectNode();
                                         difusion.put("type","senal");
                                         difusion.put("contenido", "No pudo encontrarse una partida que se ajuste a las características. Crea una propia");
 
                                         session.sendMessage(new TextMessage(difusion.toString()));
-                                        
+
                                         return;
-
-                                    } catch (IOException ex) {
-                                        Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                        
+                                    } else{
+                                    
+                                        sem.release();
+                                        
                                     }
-                                }
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (IOException ex) {
+                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
-
-                        } catch (IOException ex) {
-                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (Exception ex) {
-                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                            
+                            }
                         
                     }
                     
@@ -272,20 +283,33 @@ public class SnakeHandler extends TextWebSocketHandler {
             
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: nombre player
-                    
-                    try {
 
                         int id = snakeIds.getAndIncrement();
 
                         Snake s = new Snake(id, params[0], session);
                         Key newKey = new Key(params[0], session.toString());
 
-                        sessions.put(newKey, s);
-                        session.getAttributes().put(SNAKE_ATT, s);
+                        if(sessions.containsKey(newKey)){
                         
-                    } catch (Exception ex) {
-                        Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                            try {
+                                //Mensaje acá pidiendo otro nombre
+                                ObjectNode difusion = mapper.createObjectNode();
+                                difusion.put("type","falloNombre");
+                                
+                                session.sendMessage(new TextMessage(difusion.toString()));
+                                
+                            } catch (IOException ex) {
+                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            } finally{
+                                return;
+                            }
+                            
+                        } else{
+                        
+                            sessions.put(newKey, s);
+                            session.getAttributes().put(SNAKE_ATT, s);
+                            
+                        }
                     
                 }            
             
@@ -296,20 +320,16 @@ public class SnakeHandler extends TextWebSocketHandler {
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
-                    SnakeGame sala = salas.get(params[0]);
-                    sala.setInGame(true);
-                    ObjectNode n = mapper.createObjectNode();
-                    n.put("type","jugar");
-                    try{
+                    try {
+                        SnakeGame sala = salas.get(params[0]);
+                        sala.setInGame(true);
+                        ObjectNode n = mapper.createObjectNode();
+                        n.put("type","jugar");
                         
                         sala.broadcast(n.toString());
-                        
-                    } catch (IOException ex) {
-                        Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (Exception ex) {
                         Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
                 }
             });
             

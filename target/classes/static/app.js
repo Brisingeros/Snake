@@ -25,6 +25,14 @@ function myFunction()
         
     }while(name == "Nombre");
 
+    var newSnake = {
+						
+        funcion: "crearSerpiente",
+        params: [name]
+    
+    }
+    this.socket.send(JSON.stringify(newSnake));
+
 }
 
 let game;
@@ -238,13 +246,7 @@ class Game {
                     Console.log('Info: Press an arrow key to begin.');
 
                     myFunction();
-                    var newSnake = {
-						
-                        funcion: "crearSerpiente",
-                        params: [name]
                     
-                    }
-                    this.socket.send(JSON.stringify(newSnake));
                     var ping = {
                         funcion: "ping",
                         params:[""]
@@ -303,10 +305,12 @@ class Game {
 
 						case 'quitarSala': 
 								//eliminamos el div de la partida porque se han salido todos los jugadores
-								Console.log(packet.sala);
+								//Console.log(packet.sala);
 
 								var node = document.getElementById(packet.sala);
-								node.parentNode.removeChild(node);
+								if(node !== null){
+									node.parentNode.removeChild(node);
+								}
 								break;
 
 						case 'senal' :
@@ -316,6 +320,10 @@ class Game {
 						case 'finJuego':
 								Console.log(packet.contenido);
 								salir();
+								break;
+
+						case 'falloNombre':
+								myFunction();
 								break;
 
                     }

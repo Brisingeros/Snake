@@ -25,6 +25,14 @@ function myFunction()
         
     }while(name == "Nombre");
 
+    var newSnake = {
+						
+        funcion: "crearSerpiente",
+        params: [name]
+    
+    }
+    this.socket.send(JSON.stringify(newSnake));
+
 }
 
 let game;
@@ -238,13 +246,7 @@ class Game {
                     Console.log('Info: Press an arrow key to begin.');
 
                     myFunction();
-                    var newSnake = {
-						
-                        funcion: "crearSerpiente",
-                        params: [name]
                     
-                    }
-                    this.socket.send(JSON.stringify(newSnake));
                     var ping = {
                         funcion: "ping",
                         params:[""]
@@ -318,6 +320,10 @@ class Game {
 						case 'finJuego':
 								Console.log(packet.contenido);
 								salir();
+								break;
+
+						case 'falloNombre':
+								myFunction();
 								break;
 
                     }
