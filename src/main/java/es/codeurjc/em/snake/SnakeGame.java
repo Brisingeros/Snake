@@ -15,18 +15,20 @@ public class SnakeGame {
 	private AtomicInteger numSnakes; //Hacer que sólo se juegue cuando hayan 2 jugadores o más
         //Si sólo hay un jugador, joder la partida
         
-        //Dificultad y modo tiene que ir aquí. How? Futuro
-        private String difficulty;
+        //Dificultad y modo tiene que ir aquí.
+        //Dificultad = 1 fácil, 2 medio, 4 difícil
+        private long difficulty = 1;
         
         private boolean inGame;
 
 	private ScheduledExecutorService scheduler;
 
-        public SnakeGame(){
+        public SnakeGame(long dif){
         
             snakes = new ConcurrentHashMap<>();
             numSnakes = new AtomicInteger();
             inGame = false;
+            difficulty = dif;
             
         }
 	public void addSnake(Snake snake) {
@@ -99,8 +101,10 @@ public class SnakeGame {
 		for (Snake snake : getSnakes()) {
 			try {
 
-				System.out.println("Sending message " + message + " to " + snake.getId());
-				snake.sendMessage(message);
+                                synchronized(snake){
+                                    System.out.println("Sending message " + message + " to " + snake.getId());
+                                    snake.sendMessage(message);
+                                }
 
 			} catch (Throwable ex) {
 				System.err.println("Execption sending message to snake " + snake.getId());
@@ -112,7 +116,7 @@ public class SnakeGame {
 
 	public void startTimer() {
 		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY, TICK_DELAY, TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);
 	}
 
 	public void stopTimer() {
@@ -127,7 +131,7 @@ public class SnakeGame {
             return numSnakes.get();
         }
         
-        public String getDif(){
+        public float getDif(){
             return difficulty;
         }
 

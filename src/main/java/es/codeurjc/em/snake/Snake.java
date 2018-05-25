@@ -3,6 +3,8 @@ package es.codeurjc.em.snake;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -119,7 +121,7 @@ public class Snake {
 		return this.hexColor;
 	}
 
-        public WebSocketSession getSession() {
+        public WebSocketSession getSession() {   
             return session;
         }
 
