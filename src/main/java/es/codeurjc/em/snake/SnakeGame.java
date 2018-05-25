@@ -172,6 +172,7 @@ public class SnakeGame {
                     scheduler.shutdown();
                 }
                 
+                this.inGame = false;
                 //Avisa a los js que ha acabado la partida
                 ObjectNode n = mapper.createObjectNode();
                 n.put("type","finPartida");

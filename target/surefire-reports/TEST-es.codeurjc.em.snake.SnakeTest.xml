@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="es.codeurjc.em.snake.SnakeTest" time="1.136" tests="2" errors="1" skipped="0" failures="0">
+<testsuite name="es.codeurjc.em.snake.SnakeTest" time="0.148" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_151\jre\bin"/>
@@ -60,13 +60,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase name="testConnection" classname="es.codeurjc.em.snake.SnakeTest" time="0.127"/>
-  <testcase name="testJoin" classname="es.codeurjc.em.snake.SnakeTest" time="1.009">
-    <error type="java.lang.NullPointerException:">java.lang.NullPointerException: null
-	at es.codeurjc.em.snake.SnakeTest.testJoin(SnakeTest.java:44)
-</error>
-    <system-out><![CDATA[Connection closed. Session 0
-Connected
-]]></system-out>
-  </testcase>
+  <testcase name="testConnection" classname="es.codeurjc.em.snake.SnakeTest" time="0.144"/>
+  <testcase name="testJoin" classname="es.codeurjc.em.snake.SnakeTest" time="0.004"/>
 </testsuite>
