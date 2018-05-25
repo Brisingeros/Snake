@@ -268,7 +268,7 @@ class Game {
                         case 'update':
                                 for (var i = 0; i < packet.data.length; i++) {
                                         this.updateSnake(packet.data[i].id, packet.data[i].body);
-                                }
+                                }                                
                                 break;
                         case 'join':
                                 for (var j = 0; j < packet.data.length; j++) {

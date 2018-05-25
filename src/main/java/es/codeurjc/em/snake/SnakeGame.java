@@ -1,6 +1,9 @@
 package es.codeurjc.em.snake;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Collection;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -8,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SnakeGame {
+    
+        public Random rnd = new Random(System.currentTimeMillis());
+        private ObjectMapper mapper = new ObjectMapper();
 
 	private final static long TICK_DELAY = 100;
 
@@ -22,6 +28,8 @@ public class SnakeGame {
         private boolean inGame;
 
 	private ScheduledExecutorService scheduler;
+        
+        private Comida food;
 
         public SnakeGame(long dif){
         
@@ -64,14 +72,35 @@ public class SnakeGame {
 			for (Snake snake : getSnakes()) {
 				snake.update(getSnakes());
 			}
-
+                        
 			StringBuilder sb = new StringBuilder();
 			for (Snake snake : getSnakes()) {
 				sb.append(getLocationsJson(snake));
 				sb.append(',');
 			}
 			sb.deleteCharAt(sb.length()-1);
-			String msg = String.format("{\"type\": \"update\", \"data\" : [%s]}", sb.toString());
+                        
+                        
+                        //Meter comportamiento de comida
+                        
+                        Snake come = food.update(getSnakes());
+                        
+                        if(come != null){
+                            food = new Comida(rnd.nextInt(640), rnd.nextInt(480));
+                            
+                            //Mandarle puntos a esa serpiente
+                            ObjectNode n = mapper.createObjectNode();
+                            n.put("type","sumaPuntos");
+                            
+                            come.sendMessage(n.toString());
+                        }
+                        
+                        //Hacer un stringBuilder de comida
+                        StringBuilder fb = new StringBuilder();
+                        fb.append(food.getPosX() + ',' + food.getPosY());
+                        
+                        //Modificar para mandar ambos
+			String msg = String.format("{\"type\": \"update\", \"data\" : [%s], \"food\" : %s}", sb.toString(), fb.toString());
 
 			broadcast(msg);
 
@@ -115,6 +144,9 @@ public class SnakeGame {
 	}
 
 	public void startTimer() {
+            
+            food = new Comida(rnd.nextInt(640), rnd.nextInt(480));
+            
 		scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);
 	}
