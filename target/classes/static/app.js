@@ -8,10 +8,10 @@ Console.log = (function(message) {
         //p.style.color = '#ffa500';
 	p.innerHTML = message;
 	console.appendChild(p);
-	while (console.childNodes.length > 25) {
+	/*while (console.childNodes.length > 25) {
 		console.removeChild(console.firstChild);
 	}
-	console.scrollTop = console.scrollHeight;
+	console.scrollTop = console.scrollHeight;*/
 });
 
 var name;
@@ -77,6 +77,8 @@ function salir(){
 	
 	borrarDiv('#salaActual');
 	document.getElementById("partidas-container").style.display = 'inline-block';
+	document.getElementById("serpiente").style.display = "block";
+	document.getElementById("ranking").style.display = "block";
 	salaP = null;
 
 }
@@ -235,22 +237,26 @@ class Game {
 
 	drawPoints(space, id){
 
-		this.context.font="20pt Verdana";
+		this.context.font = "12px Tw Cen MT";
 		this.context.fillStyle = this.snakes[id].color;
-		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,5,space);
+		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,10,space);
 
 	}
 	sala(jugadores,sala){
 		
+		document.getElementById("serpiente").style.display = "none";
+		document.getElementById("ranking").style.display = "none";
 		game.context.clearRect(0, 0, 640, 480);
 		var d = document.getElementById("salaActual");
 		borrarDiv('#salaActual');
-		this.context.font = "30px Verdana";
+		this.context.font = "20px Tw Cen MT";
 		this.context.fillStyle = "white";
+		this.context.textAlign = "center";
 		salaP = sala;
-		this.context.fillText("Sala: " + sala, 50, 50);
+		this.context.fillText("Sala: " + sala, 300, 50);
 		var alto = 50;
 		var b1 = document.createElement("button");
+		b1.id = "salir";
 		b1.textContent = "Salir";
 
 		b1.addEventListener("click", salir);
@@ -260,6 +266,7 @@ class Game {
 
 			var b2 = document.createElement("button");
 			b2.textContent = "Comenzar juego";
+			b2.id = "comenzar";
 			b2.addEventListener("click",function(){
 
 				var ob = {
@@ -280,7 +287,8 @@ class Game {
 		for(var i = 0; i < jugadores.length; i++){
 
 			inc += 50;
-			this.context.fillText(jugadores[i], 50, alto + inc);
+			this.context.font = "15px Tw Cen MT";
+			this.context.fillText(jugadores[i], 300, alto + inc);
 
 		}
 	
@@ -357,6 +365,8 @@ class Game {
 								this.sala(JSON.parse(packet.players),packet.sala);
 								break;
 						case 'jugar' : 
+								if(document.getElementById("comenzar")!= null)
+									document.getElementById("salaActual").removeChild(document.getElementById("comenzar"));
 								this.startGameLoop();
 								break;
 
@@ -389,44 +399,48 @@ class Game {
 								break;
 
 						case 'finPartida':
-								var s = getPuntuacionMaxima();
+
 								this.stopGameLoop();
 								window.setTimeout(function(){
 
+									game.context.clearRect(0,0,640,480);
 									game.context.font="20pt Verdana";
 									game.context.fillStyle = "#CCCCCC";
-									game.context.fillText("¡Ha ganado: " + s[0] + " con \n" + s[1] + " puntos!",50,240);
+									game.context.fillText("¡Ha ganado: " + packet.ganador + " con \n" + packet.puntos + " puntos!",50,240);
 
 								}, 2000);
 								
-								//Console.log("¡Ha ganado: " + s[0] + " con " + s[1] + " puntos!");
-								//salir();
-								//postPuntos(s);
 								break;
-
+						case 'jugadorConecta':	addListaJugadores(JSON.parse(packet.names));
+								break;
+						case 'jugadorDesconecta': removeListaJugadores(packet.name);
+								break;
                     }
             }
                     
 	}
 }
 
-function getPuntuacionMaxima(){
+function addListaJugadores(jugadores){
 
-	var p = 0;
-	var n = null;
-	for(var i = 0; i < game.snakes.length; i++){
-
-		if(game.snakes[i].puntos > p){
-
-			p = game.snakes[i].puntos;
-			n = game.snakes[i].nombre;
-		}
-
+	$('#lista').empty();
+	document.getElementById("lista").textContent = "Jugadores Online";
+	for(var i = 0; i < jugadores.length; i++){
+		var j = document.createElement("div");
+		j.id = jugadores[i];
+		j.textContent = jugadores[i];
+		document.getElementById("lista").appendChild(j);
 	}
 
-	return [n,p];
+}
+
+function removeListaJugadores(jugador){
+
+	var n = document.getElementById(jugador);
+	document.getElementById("lista").removeChild(n);
 
 }
+
 function postPartida(d){
 
 	document.getElementById("selector").style.display = 'none';
@@ -457,31 +471,6 @@ function postPartida(d){
 
 }
 
-function postPuntos(objeto){
-	
-		
-		var ob = {
-			
-			name: objeto[0],
-			punts: objeto[1]
-	
-		}
-		$.ajax({
-	
-			method: "POST",
-			url: "http://" + window.location.host + "/sendPuntos",
-			data: JSON.stringify(ob),
-			processData: false,
-			headers: {
-	
-				"Content-type":"application/json"
-	
-			}
-		}).done(function(data){
-			
-		});
-	
-	}
 function buscar(dif){
 	
 	document.getElementById("selector").style.display = 'none';
@@ -497,6 +486,7 @@ function buscar(dif){
 }
 function selector(funcion){
 
+	document.getElementById("partidas-container").style.display = "none";
 	var dificultad; //facil:1,medio:2,dificil:4
 	var sel = document.getElementById("selector");
 	borrarDiv('#selector');
@@ -515,6 +505,8 @@ function selector(funcion){
 			postPartida(dificultad);
 		else
 			buscar(dificultad);
+
+		document.getElementById("partidas-container").style.display = "inline-block";
 	});
 	p2.appendChild(facil);
 	sel.appendChild(p2);
@@ -530,6 +522,7 @@ function selector(funcion){
 			postPartida(dificultad);
 		else
 			buscar(dificultad);
+		document.getElementById("partidas-container").style.display = "inline-block";
 	});
 	p3.appendChild(medio);
 	sel.appendChild(p3);
@@ -544,6 +537,7 @@ function selector(funcion){
 			postPartida(dificultad);
 		else
 			buscar(dificultad);
+		document.getElementById("partidas-container").style.display = "inline-block";
 	});
 	p4.appendChild(dificil);
 	sel.appendChild(p4);
@@ -585,6 +579,52 @@ $(document).ready(function(){
 		
 		selector();
 		
+	});
+
+	$('#ranking').click(function(){
+
+		document.getElementById("serpiente").style.display = "none";
+		document.getElementById("ranking").style.display = "none";
+		//RANKING
+		$.ajax({
+			
+			method:"GET",
+			url:"http://" + window.location.host + "/muroPuntos",
+	
+		}).done(function(data){
+			
+			console.log(JSON.parse(data));
+			game.context.clearRect(0, 0, 640, 480);
+	
+			var puntos = JSON.parse(data);
+			for(var i = 0; i < puntos.length; i++){
+	
+				var array = JSON.parse(puntos[i]);
+				var div = document.createElement("div");
+				div.textContent = array[0] + " : " + array[1]; //0 nombre, 1 puntos
+				document.getElementById("muro").appendChild(array);
+	
+			}
+
+			var sal = document.createElement('button');
+			sal.textContent = "Salir";
+			sal.id = "salirRanking";
+			sal.addEventListener("click",function(){
+
+				borrarDiv('#muro');
+				document.getElementById("botonesRanking").removeChild(sal);
+				game.context.clearRect(0,0,640,480);
+				document.getElementById("partidas-container").style.display = 'inline-block';
+				document.getElementById("serpiente").style.display = "block";
+				document.getElementById("ranking").style.display = "block";
+
+			});
+
+			document.getElementById("botonesRanking").appendChild(sal);
+
+		
+		});
+
 	});
     
 })
@@ -630,7 +670,7 @@ function crearDiv(info){
 	boton.type = "button";
 	boton.textContent = "unirse";
 	boton.style.alignSelf = "right";
-	boton.id = "#unirse-btn"
+	boton.id = "unirse-btn"
 	boton.addEventListener("click", function(){	
 		var part = {
             funcion: "unirGame",

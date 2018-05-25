@@ -7,19 +7,51 @@
         position: absolute;
         left: 30%;
         top: 20%;
+        z-index:-1;
+}
+#muro{
+
+    position: relative;
+    z-index: 100;
+
+}
+
+#salirRanking{
+
+    transform: translate(420%, 100%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 25px;
+    padding: 16px 50px;
+   font-family:Tw Cen MT black;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    
+}
+#salirRanking:hover {
+	background-color: black;
+        color: white;
+
 }
 #actualizar-btn{
   
-    transform: translate(-50%, -50%);
+    transform: translate(20%, 10%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
     font-size: 16px;
     padding: 16px 30px;
-    border: none;
+    font-family:Tw Cen MT;
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
+}
+#serpiente{
+	position:relative;
+	transform: translate(130%, 33.5%);
+	z-index:100;
 }
 
 #actualizar-btn:hover {
@@ -28,13 +60,13 @@
 
 }
 #crear-btn{
-    transform: translate(-50%, -50%);
+    transform: translate(10%, 10%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
     font-size: 16px;
     padding: 16px 30px;
-    border: none;
+   font-family:Tw Cen MT;
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
@@ -46,18 +78,36 @@
 
 }
 
+#ranking{
+    transform: translate(420%, 100%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 25px;
+    padding: 16px 50px;
+   font-family:Tw Cen MT black;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    
+}
+#ranking:hover {
+	background-color: black;
+        color: white;
+
+}
 #buscar-btn{
-    transform: translate(-50%, -50%);
+    transform: translate(0%, 10%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
     font-size: 16px;
     padding: 16px 30px;
-    border: none;
+    
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
-    
+    font-family:Tw Cen MT;
 }
 
 #buscar-btn:hover{
@@ -65,29 +115,177 @@
         color: white;
     
 }
+#message{
+	left:3%;
+	position:relative;
+}
+#send-btn{
+
+	
+    transform: translate(20%, 0%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 12px;
+    padding: 5px 15px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    
+}
+
+#send-btn:hover{
+    background-color: black;
+        color: white;
+    
+}
+#lista{
+	display:inline-block;
+	top:20%;
+	left:1%;
+	font-family:Tw Cen MT black;
+	font-size:15px;
+	position: absolute;
+	border: 1px solid #CCCCCC;
+	border-right-color: #999999;
+	border-bottom-color: #999999;
+	background-color:#ffffffba;
+	height: 480px;
+	overflow-y: scroll;
+	padding-left: 10px;
+	width: 10%;
+	text-decoration: underline black;
+	
+}
 #console-container {
 	position: absolute;
 	z-index: -1;
-	justify-content: center;
-	align-items: center;
+	text-align: justify;
 	margin-left: 15px;
 	width: 300px;
-	display: inline-block;
+	display:inline-block;
+	background-color:#ffffffba;
+	top:20%;
+	left:11%;
 }
 
 #selector{
-
+	
+	position:relative;
 	background-color: rgb(255, 255, 255);
+	border: 3px solid #050505;
 	z-index: 100;
+	width:50%;
+	font-family:Tw Cen MT;
+
+	transform:translate(0%,100%);
 
 }
+#f{
+	font-family:Tw Cen MT;
+	transform: translate(0%, 0%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 12px;
+    padding: 5px 15px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+#f:hover{
+    background-color: black;
+        color: white;
+    
+}
+
+#d{
+	font-family:Tw Cen MT;
+	transform: translate(0%, 0%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 12px;
+    padding: 5px 15px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+#d:hover{
+    background-color: black;
+        color: white;
+    
+}
+#m{
+	font-family:Tw Cen MT;
+	transform: translate(0%, 0%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 12px;
+    padding: 5px 15px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+#m:hover{
+    background-color: black;
+        color: white;
+    
+}
+
+#salir{
+	font-family:Tw Cen MT;
+	transform: translate(600%, 1650%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 15px;
+    padding: 10px 30px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    
+}
+#salir:hover{
+    background-color: black;
+        color: white;
+    
+}
+
+#comenzar{
+	font-family:Tw Cen MT;
+	transform: translate(350%, 1650%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 15px;
+    padding: 10px 30px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    
+}
+#comenzar:hover{
+    background-color: black;
+        color: white;
+    
+}
+
 #console {
 	border: 1px solid #CCCCCC;
 	border-right-color: #999999;
 	border-bottom-color: #999999;
-	height: 480px;
+	height: 453px;
 	overflow-y: scroll;
-	display: inline-block;
+	font-family:Tw Cen MT;
+	font-size:15px;
 	padding-left: 5px;
 	padding-right: 5px;
 	width: 100%;
@@ -101,42 +299,29 @@
 #partidas-container{
 
 	display:inline-block;
-	top:80%;
-	left:10%;
-
-	align-items: center;
-	position: fixed;
+	top:20%;
+	right:1%;
+	
+	position: absolute;
 	border: 1px solid #CCCCCC;
 	border-right-color: #999999;
 	border-bottom-color: #999999;
-	background-color:#ff7f50ba;
+	background-color:#ffffffba;
 	height: 480px;
 	overflow-y: scroll;
 	padding-right: 10px;
 	width: 30%;
-
+        z-index: -1;
 }
 
-#partidas-container button{
 
-	align-self: center;
-	
 
-}
-
-#partidas{
-
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-top: 50 px;
-
-}
 
 #partidas div{
 
 	margin-left: 10px;
 	margin-right: 10px;
-	margin-top: 50 px;
+	margin-top: 5%;
 	margin-bottom: 20 px;
 
 }
@@ -145,3 +330,29 @@ body {
     background: url(fondo.png)no-repeat fixed center center #333;
     background-size: cover;
 }
+#partidas{
+        position: relative;
+        margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 50 px;
+	text-align:justify;
+	font-size: 17px;
+	font-family:Tw Cen MT;
+	z-index: -1;
+}
+#unirse-btn{
+
+	transform: translate(10%, 0%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: #f1f1f1;
+    color: black;
+    font-size: 16px;
+    padding: 10px 20px;
+    font-family:Tw Cen MT;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+
+/*cambiar en el js # de unirse*/

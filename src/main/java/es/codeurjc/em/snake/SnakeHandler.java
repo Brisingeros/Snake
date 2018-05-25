@@ -314,8 +314,14 @@ public class SnakeHandler extends TextWebSocketHandler {
                             
                             //Mensaje conexión
                             ObjectNode difusion = mapper.createObjectNode();
+                            ArrayList<String> jugadores = new ArrayList<>();
+                            for(Snake snk : sessions.values()){
+                            
+                                jugadores.add(snk.getName());
+                            
+                            }
                             difusion.put("type","jugadorConecta");
-                            difusion.put("name", s.getName());
+                            difusion.put("names", gson.toJson(jugadores));
                             
                             for(Snake snk : sessions.values()){
                                 try {
@@ -433,7 +439,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                 //Cogemos ambos attribs
 		String s = (String) session.getAttributes().get(SALA_ATT);
                 Snake snek = (Snake) session.getAttributes().get(SNAKE_ATT);
-                
+                String name = snek.getName();
                 //Quitamos la serpiente de la sala y mandamos mensaje
                 if(!s.equals("none")){
                     salas.get(s).removeSnake(snek);
@@ -446,7 +452,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                 //Mensaje desconexión
                 ObjectNode difusion = mapper.createObjectNode();
                 difusion.put("type","jugadorDesconecta");
-                difusion.put("name", snek.getName());
+                difusion.put("name", name);
                 
                 //Quitamos la serpiente de sesiones
                 Key newKey = new Key("placeholder", session.toString());
@@ -510,7 +516,13 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             });
             
-            puntuaciones = (CopyOnWriteArrayList<String[]>) puntuaciones.subList(0, 10);
+            if(puntuaciones.size() >= 10)
+                
+                puntuaciones = (CopyOnWriteArrayList<String[]>) puntuaciones.subList(0, 10);
+            
+            else
+                
+                puntuaciones = (CopyOnWriteArrayList<String[]>) puntuaciones.subList(0, puntuaciones.size());
             
         }
 

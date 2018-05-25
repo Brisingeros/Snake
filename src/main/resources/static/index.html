@@ -8,22 +8,28 @@
 </head>
 <body style="text-align: center">
 
-	
+	<fieldset id = "selector" style="display:none"> </fieldset>
+        
 	<div id="partidas-container" style="align-items: center">
 			
 		<button id = "buscar-btn">Buscar sala</button>
 		<button id = "crear-btn">Crear sala</button>
 		<button id = "actualizar-btn">Actualizar</button>
-
+                
 		<div id="partidas" style="margin-top:50 px"></div>
-		<fieldset id = "selector" style="display:none"> </fieldset>
+		
 	</div>
+        
 	<div style="float: left" >
+            
 		<!--<div onclick="cancelar()" > <img src="cancel.png"></div>-->
 		<canvas id="playground" width="640" height="480"></canvas>
 		<div id="salaActual" style="display:block;position:absolute"></div>
+		<div id="serpiente" ><img src="serpiente.png"></div>
+		<div id="botonesRanking"><button id="ranking">Ranking</button></div>
+		<div id="muro"></div>
 	</div>
-	
+        <div id="lista">Jugadores Online</div>
 	<div id="console-container">
 		
 		<div id="console"></div>
@@ -31,6 +37,8 @@
 		<input type="text" name="message" id="message" placeholder="Message" maxlength="80" style="width: 60%" />
 		<button id="send-btn">Send</button>
 	</div>
+        
+       
     	
 	<script src="app.js"></script>
 

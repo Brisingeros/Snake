@@ -183,7 +183,7 @@ public class SnakeGame {
                 ObjectNode n = mapper.createObjectNode();
                 n.put("type","finPartida");
                 n.put("ganador", aux[0]);
-                n.put("ganador", aux[1]);
+                n.put("puntos", aux[1]);
                 broadcast(n.toString());
                 
             } catch (Exception ex) {
