@@ -224,7 +224,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                                     StringBuilder sb = new StringBuilder();
                                     for (Snake snake : sala.getSnakes()) {
-                                        sb.append(String.format("{\"id\": %d, \"color\": \"%s\"}", snake.getId(), snake.getHexColor()));
+                                        sb.append(String.format("{\"id\": %d, \"color\": \"%s\",\"name\":\"%s\"}", snake.getId(), snake.getHexColor(),snake.getName()));
                                         sb.append(',');
                                     }
                                     sb.deleteCharAt(sb.length()-1);

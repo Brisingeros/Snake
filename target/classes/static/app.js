@@ -44,6 +44,7 @@ class Snake {
 		this.snakeBody = [];
 		this.color = null;
 		this.puntos = 0;
+		this.nombre = null;
 
 	}
 
@@ -186,9 +187,10 @@ class Game {
 		this.food.color= color;
 
 	}
-	addSnake(id, color) {
+	addSnake(id, color,name) {
 		this.snakes[id] = new Snake();
 		this.snakes[id].color = color;
+		this.snakes[id].nombre = name;
 	}
 
 	updateSnake(id, snakeBody) {
@@ -308,7 +310,7 @@ class Game {
                                 break;
                         case 'join':
                                 for (var j = 0; j < packet.data.length; j++) {
-                                        this.addSnake(packet.data[j].id, packet.data[j].color);
+                                        this.addSnake(packet.data[j].id, packet.data[j].color, packet.data[j].name);
 								}
 								//this.sala(packet.name);
                                 break;
@@ -367,13 +369,37 @@ class Game {
 								Console.log("Puntos: " + this.snakes[packet.id].puntos);
 								break;
 
+						case 'finPartida':
+								var s = getPuntuacionMaxima();
+								Console.log("¡Ha ganado: " + s[0] + " con " + s[1] + " puntos!");
+								salir();
+								postPuntos(s);
+								break;
+
                     }
             }
                     
 	}
 }
 
-function post(d){
+function getPuntuacionMaxima(){
+
+	var p = 0;
+	var n = null;
+	for(var i = 0; i < game.snakes.length; i++){
+
+		if(game.snakes[i].puntos > p){
+
+			p = game.snakes[i].puntos;
+			n = game.snakes[i].nombre;
+		}
+
+	}
+
+	return [n,p];
+
+}
+function postPartida(d){
 
 	document.getElementById("selector").style.display = 'none';
 	var ob = {
@@ -403,6 +429,31 @@ function post(d){
 
 }
 
+function postPuntos(objeto){
+	
+		
+		var ob = {
+			
+			name: objeto[0],
+			punts: objeto[1]
+	
+		}
+		$.ajax({
+	
+			method: "POST",
+			url: "http://" + window.location.host + "/sendPuntos",
+			data: JSON.stringify(ob),
+			processData: false,
+			headers: {
+	
+				"Content-type":"application/json"
+	
+			}
+		}).done(function(data){
+			
+		});
+	
+	}
 function buscar(dif){
 	
 	document.getElementById("selector").style.display = 'none';
@@ -433,7 +484,7 @@ function selector(funcion){
 
 		dificultad = 1
 		if(funcion=="post")
-			post(dificultad);
+			postPartida(dificultad);
 		else
 			buscar(dificultad);
 	});
@@ -448,7 +499,7 @@ function selector(funcion){
 
 		dificultad = 2
 		if(funcion=="post")
-			post(dificultad);
+			postPartida(dificultad);
 		else
 			buscar(dificultad);
 	});
@@ -462,7 +513,7 @@ function selector(funcion){
 
 		dificultad = 4
 		if(funcion=="post")
-			post(dificultad);
+			postPartida(dificultad);
 		else
 			buscar(dificultad);
 	});
