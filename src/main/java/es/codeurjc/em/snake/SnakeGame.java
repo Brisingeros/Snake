@@ -90,13 +90,15 @@ public class SnakeGame {
                         Snake come = food.update(getSnakes());
                         
                         if(come != null){
+                            
+                            come.setPuntos(10);
                             food = new Comida();
                             
                             //Mandarle puntos a esa serpiente
                             ObjectNode n = mapper.createObjectNode();
                             n.put("type","sumaPuntos");
                             n.put("id",come.getId());
-                            n.put("puntos",10);
+                            n.put("puntos",come.getPuntos());
                             broadcast(n.toString());
                         }
                         
@@ -160,7 +162,7 @@ public class SnakeGame {
             
 		scheduler = Executors.newScheduledThreadPool(2);
 		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);
-                scheduler.schedule(() -> stopTimer(), 3, TimeUnit.MINUTES);
+                scheduler.schedule(() -> stopTimer(), 1, TimeUnit.MINUTES);
 	}
 
 	public void stopTimer() {

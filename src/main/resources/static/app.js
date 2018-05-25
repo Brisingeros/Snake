@@ -59,9 +59,11 @@ class Snake {
 
 function salir(){
 
-	//game.context.clearRect(0, 0, 640, 480);
 	
-	game.stopGameLoop();
+	if(game.nextFrame != null)
+		game.stopGameLoop();
+	else
+		game.context.clearRect(0, 0, 640, 480);
 
 	var o = {
 
@@ -174,8 +176,11 @@ class Game {
 
 	draw() {
 		this.context.clearRect(0, 0, 640, 480);
-		for (var id in this.snakes) {			
+		var space = 20;
+		for (var id in this.snakes) {
+			this.drawPoints(space, id);			
 			this.snakes[id].draw(this.context);
+			space += 40;
 		}
 		this.food.draw(this.context);
 	}
@@ -187,10 +192,11 @@ class Game {
 		this.food.color= color;
 
 	}
-	addSnake(id, color,name) {
+	addSnake(id, color,name,ptos) {
 		this.snakes[id] = new Snake();
 		this.snakes[id].color = color;
 		this.snakes[id].nombre = name;
+		this.snakes[id].puntos = ptos;
 	}
 
 	updateSnake(id, snakeBody) {
@@ -204,6 +210,7 @@ class Game {
 		// Force GC.
 		delete this.snakes[id];
 	}
+
 
 	run() {
 	
@@ -220,10 +227,17 @@ class Game {
 
 	updatePuntos(id,ptos){
 
-		this.snakes[id].puntos += ptos;
+		this.snakes[id].puntos = ptos;
 
 	}
 
+	drawPoints(space, id){
+
+		this.context.font="20pt Verdana";
+		this.context.fillStyle = this.snakes[id].color;
+		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,5,space);
+
+	}
 	sala(jugadores,sala){
 		
 		game.context.clearRect(0, 0, 640, 480);
@@ -300,17 +314,18 @@ class Game {
                     var packet = JSON.parse(message.data);
 
                     switch (packet.type) {
-                        case 'update':
+						case 'update':
                                 for (var i = 0; i < packet.data.length; i++) {
-                                        this.updateSnake(packet.data[i].id, packet.data[i].body);
+
+										this.updateSnake(packet.data[i].id, packet.data[i].body);
 								}
-								//Console.log("Comida en: " + packet.food[0] + "," + packet.food[1]);
 								this.updateFood(packet.food[0], packet.food[1], packet.food[2]);
 								
                                 break;
-                        case 'join':
+						case 'join':
+								//Console.log("Serpiente agregada");
                                 for (var j = 0; j < packet.data.length; j++) {
-                                        this.addSnake(packet.data[j].id, packet.data[j].color, packet.data[j].name);
+                                        this.addSnake(packet.data[j].id, packet.data[j].color, packet.data[j].name, packet.data[j].puntos);
 								}
 								//this.sala(packet.name);
                                 break;
@@ -319,10 +334,12 @@ class Game {
                                 break;
                         case 'dead':
                                 Console.log('Info: Your snake is dead, bad luck!');
-                                this.direction = 'none';
+								this.direction = 'none';
+								this.updatePuntos(packet.id,packet.puntos);
                                 break;
                         case 'kill':
-                                Console.log('Info: Head shot!');
+								Console.log('Info: Head shot!');
+								this.updatePuntos(packet.id,packet.puntos);
                                 break;
 
                         case 'chat':
@@ -366,14 +383,23 @@ class Game {
 						
 						case 'sumaPuntos': 
 								this.updatePuntos(packet.id,packet.puntos);
-								Console.log("Puntos: " + this.snakes[packet.id].puntos);
+								//Console.log("Puntos: " + this.snakes[packet.id].puntos);
 								break;
 
 						case 'finPartida':
 								var s = getPuntuacionMaxima();
-								Console.log("¡Ha ganado: " + s[0] + " con " + s[1] + " puntos!");
-								salir();
-								postPuntos(s);
+								this.stopGameLoop();
+								window.setTimeout(function(){
+
+									game.context.font="20pt Verdana";
+									game.context.fillStyle = "#CCCCCC";
+									game.context.fillText("¡Ha ganado: " + s[0] + " con \n" + s[1] + " puntos!",50,240);
+
+								}, 2000);
+								
+								//Console.log("¡Ha ganado: " + s[0] + " con " + s[1] + " puntos!");
+								//salir();
+								//postPuntos(s);
 								break;
 
                     }

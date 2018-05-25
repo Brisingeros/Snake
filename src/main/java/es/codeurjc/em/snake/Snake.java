@@ -1,5 +1,8 @@
 package es.codeurjc.em.snake;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
@@ -14,7 +17,8 @@ public class Snake {
 	private static final int DEFAULT_LENGTH = 5;
 
 	private final int id;
-
+        private ObjectMapper mapper = new ObjectMapper();
+        private int puntos;
 	private Location head;
 	private final Deque<Location> tail = new ArrayDeque<>();
 	private int length = DEFAULT_LENGTH;
@@ -31,25 +35,48 @@ public class Snake {
 		this.session = session;
 		this.hexColor = SnakeUtils.getRandomHexColor();
                 this.name = name;
+                this.puntos = 0;
                 this.inGame = false;
 		resetState();
 	}
+
+        public int getPuntos() {
+            return puntos;
+        }
+
+        public void setPuntos(int puntos) {
+            this.puntos += puntos;
+        }
 
 	public void resetState() {
 		this.direction = Direction.NONE;
 		this.head = SnakeUtils.getRandomLocation();
 		this.tail.clear();
 		this.length = DEFAULT_LENGTH;
+                
+                if(this.puntos >= 20)
+                    
+                    this.puntos -= 20;
+                else
+                    this.puntos = 0;
 	}
 
 	private synchronized void kill() throws Exception {
 		resetState();
-		sendMessage("{\"type\": \"dead\"}");
+                ObjectNode n = mapper.createObjectNode();
+                n.put("type","dead");
+                n.put("id",this.id);
+                n.put("puntos",this.puntos);
+		sendMessage(n.toString());
 	}
 
-	private synchronized void reward() throws Exception {
+	private synchronized void reward(Snake s) throws Exception {
 		//this.length++;
-		sendMessage("{\"type\": \"kill\"}");
+		ObjectNode n = mapper.createObjectNode();
+                n.put("type","kill");
+                n.put("id",s.getId());
+                n.put("puntos",s.getPuntos());
+		sendMessage(n.toString());
 	}
 
 	protected void sendMessage(String msg) throws Exception {
@@ -95,7 +122,7 @@ public class Snake {
 			if (headCollision || tailCollision) {
 				kill();
 				if (this.id != snake.id) {
-					snake.reward();
+					snake.reward(this);
 				}
 			}
 		}
