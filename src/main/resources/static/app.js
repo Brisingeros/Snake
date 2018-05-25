@@ -23,15 +23,17 @@ function myFunction()
     
         name=prompt("Inserta tu nombre","Nombre");
         
-    }while(name == "Nombre");
+    }while(name == "Nombre" || name == "null");
 
-    var newSnake = {
+
+	var newSnake = {
 						
-        funcion: "crearSerpiente",
-        params: [name]
-    
-    }
-    game.socket.send(JSON.stringify(newSnake));
+		funcion: "crearSerpiente",
+		params: [name]
+	
+	}
+	game.socket.send(JSON.stringify(newSnake));
+
 
 }
 
@@ -568,8 +570,10 @@ $(document).ready(function(){
 
 		}while(p =="Nombre");
 
-		salaP = p;
-		selector("post");
+		if(p !== null){
+			salaP = p;
+			selector("post");
+		}
 		
     });
 	$('#actualizar-btn').click(function(){
@@ -593,13 +597,14 @@ function partidas(){
         url:"http://" + window.location.host + "/partidas",
 
     }).done(function(data){
-        
+		
+		console.log(JSON.parse(data));
 		borrarDiv('#partidas');
 
 		var partidas = JSON.parse(data);
 		for(var i = 0; i < partidas.length; i++){
 
-			crearDiv(partidas[i]); //para que salga sin comillas parseamos (otra vez)
+			crearDiv(partidas[i]); 
 
 		}
     

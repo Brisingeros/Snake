@@ -435,13 +435,15 @@ public class SnakeHandler extends TextWebSocketHandler {
         public ArrayList<String[]> getNombrePartidas(){
             
             ArrayList<String[]> sol = new ArrayList<>();
-            String[] aux = new String[3];
+            String[] aux;
             for(String s : this.salas.keySet()){
+                aux = new String[3];
                 aux[0] = s;
                 aux[1] = String.valueOf(salas.get(s).getNum());
                 aux[2] = String.valueOf(salas.get(s).getDif());
                 
                 sol.add(aux);
+                
             }
             
             return sol;
