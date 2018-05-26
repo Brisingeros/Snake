@@ -615,7 +615,8 @@ $(document).ready(function(){
 			sal.id = "salirRanking";
 			sal.addEventListener("click",function(){
 
-				 document.getElementById("muro").style.display="none";
+				document.getElementById("muro").style.display="none";
+				document.getElementById("muro").innerHTML='';
 				document.getElementById("botonesRanking").removeChild(sal);
 				game.context.clearRect(0,0,640,480);
 				document.getElementById("partidas-container").style.display = 'inline-block';

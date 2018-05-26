@@ -117,6 +117,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     sala.removeSnake(snek);
                     
                     snek.resetState();
+                    //snek = new Snake(snek.getId(), snek.getName(), session);
                     
                     int num;
                     

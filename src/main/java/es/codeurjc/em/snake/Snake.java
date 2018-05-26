@@ -19,7 +19,7 @@ public class Snake {
 	private final Deque<Location> tail = new ArrayDeque<>();
 	private int length = DEFAULT_LENGTH;
 
-	private final String hexColor;
+	private String hexColor;
 	private Direction direction;
 
 	private final WebSocketSession session;
@@ -49,6 +49,15 @@ public class Snake {
 		this.head = SnakeUtils.getRandomLocation();
 		this.tail.clear();
 		this.length = DEFAULT_LENGTH;
+                this.hexColor = SnakeUtils.getRandomHexColor();
+                this.puntos = 0;
+	}
+        
+        public void muerte() {
+		this.direction = Direction.NONE;
+		this.head = SnakeUtils.getRandomLocation();
+		this.tail.clear();
+		this.length = DEFAULT_LENGTH;
                 
                 if(this.puntos >= 20)
                     
@@ -58,7 +67,8 @@ public class Snake {
 	}
 
 	private synchronized void kill() throws Exception {
-		resetState();
+		//resetState();
+                muerte();
                 ObjectNode n = mapper.createObjectNode();
                 n.put("type","dead");
                 n.put("id",this.id);

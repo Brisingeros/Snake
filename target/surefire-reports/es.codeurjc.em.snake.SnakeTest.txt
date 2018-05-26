@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 Test set: es.codeurjc.em.snake.SnakeTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 4.565 sec <<< FAILURE! - in es.codeurjc.em.snake.SnakeTest
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 4.4 sec <<< FAILURE! - in es.codeurjc.em.snake.SnakeTest
 testInicioAutom(es.codeurjc.em.snake.SnakeTest)  Time elapsed: 2.018 sec  <<< FAILURE!
 java.lang.AssertionError: The fist message should contain 'jugar', but it is {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 	at org.junit.Assert.fail(Assert.java:88)
