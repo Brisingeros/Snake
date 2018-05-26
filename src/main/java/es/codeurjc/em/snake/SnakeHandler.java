@@ -114,7 +114,12 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     sala.removeSnake(snek);
                     
-                    int num = sala.getNum();
+                    int num;
+                    
+                    synchronized(sala){
+                        num = sala.getNum();
+                    }
+                    
                     boolean jugando = sala.isInGame();
                     
                     if(jugando){

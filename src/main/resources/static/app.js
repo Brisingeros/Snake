@@ -237,9 +237,10 @@ class Game {
 
 	drawPoints(space, id){
 
-		this.context.font = "12px Tw Cen MT";
+		this.context.font = "20px Tw Cen MT";
 		this.context.fillStyle = this.snakes[id].color;
-		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,10,space);
+                this.context.textAlign="left";
+		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,19,space);
 
 	}
 	sala(jugadores,sala){
@@ -287,7 +288,7 @@ class Game {
 		for(var i = 0; i < jugadores.length; i++){
 
 			inc += 50;
-			this.context.font = "15px Tw Cen MT";
+			this.context.font = "20px Tw Cen MT";
 			this.context.fillText(jugadores[i], 300, alto + inc);
 
 		}
@@ -406,8 +407,9 @@ class Game {
 									game.context.clearRect(0,0,640,480);
 									game.context.font="20pt Verdana";
 									game.context.fillStyle = "#CCCCCC";
-									game.context.fillText("¡Ha ganado: " + packet.ganador + " con \n" + packet.puntos + " puntos!",50,240);
-
+									game.context.fillText("¡Ha ganado: " + packet.ganador + " con \n" + packet.puntos + " puntos!",90,240);
+                                                                        
+                                    window.setTimeout (salir, 2000);
 								}, 2000);
 								
 								break;

@@ -1,9 +1,9 @@
 #playground {
-	width: 640px;
-	height: 480px;
-	background-color: #000;
-	position: static;
-	display: inline-block;
+    width: 640px;
+    height: 480px;
+    background-color: #000;
+    position: static;
+    display: inline-block;
         position: absolute;
         left: 30%;
         top: 20%;
@@ -17,13 +17,13 @@
 }
 
 #salirRanking{
-
-    transform: translate(420%, 100%);
+    -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    transform: translate(900%, 1300%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
     font-size: 25px;
-    padding: 16px 50px;
+    padding: 10px 30px;
    font-family:Tw Cen MT black;
     cursor: pointer;
     border-radius: 5px;
@@ -31,12 +31,12 @@
     
 }
 #salirRanking:hover {
-	background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
 
 }
 #actualizar-btn{
-  
+    -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     transform: translate(20%, 10%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
@@ -49,17 +49,18 @@
     text-align: center;
 }
 #serpiente{
-	position:relative;
-	transform: translate(130%, 33.5%);
-	z-index:100;
+    position:relative;
+    transform: translate(130%, 33.5%);
+    z-index:100;
 }
 
 #actualizar-btn:hover {
-	background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
 
 }
 #crear-btn{
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     transform: translate(10%, 10%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
@@ -73,14 +74,15 @@
     
 }
 #crear-btn:hover {
-	background-color: black;
-        color: white;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
+    color: white;
 
 }
 
 #ranking{
-    transform: translate(420%, 100%);
-    -ms-transform: translate(-50%, -50%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    transform: translate(430%, 100%);
+   
     background-color: #f1f1f1;
     color: black;
     font-size: 25px;
@@ -92,11 +94,12 @@
     
 }
 #ranking:hover {
-	background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
 
 }
 #buscar-btn{
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     transform: translate(0%, 10%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
@@ -111,17 +114,17 @@
 }
 
 #buscar-btn:hover{
-    background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
     
 }
 #message{
-	left:3%;
-	position:relative;
+    left:3%;
+    position:relative;
 }
 #send-btn{
 
-	
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     transform: translate(20%, 0%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
@@ -136,55 +139,57 @@
 }
 
 #send-btn:hover{
-    background-color: black;
+  background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
     
 }
 #lista{
-	display:inline-block;
-	top:20%;
-	left:1%;
-	font-family:Tw Cen MT black;
-	font-size:15px;
-	position: absolute;
-	border: 1px solid #CCCCCC;
-	border-right-color: #999999;
-	border-bottom-color: #999999;
-	background-color:#ffffffba;
-	height: 480px;
-	overflow-y: scroll;
-	padding-left: 10px;
-	width: 10%;
-	text-decoration: underline black;
-	
+    display:inline-block;
+    top:20%;
+    left:1%;
+    font-family:Tw Cen MT black;
+    font-size:15px;
+    position: absolute;
+    border: 1px solid #CCCCCC;
+    border-right-color: #999999;
+    border-bottom-color: #999999;
+    background-color:#ffffffba;
+    height: 480px;
+    overflow-y: scroll;
+    padding-left: 10px;
+    width: 10%;
+    
+    
 }
+
 #console-container {
-	position: absolute;
-	z-index: -1;
-	text-align: justify;
-	margin-left: 15px;
-	width: 300px;
-	display:inline-block;
-	background-color:#ffffffba;
-	top:20%;
-	left:11%;
+    position: absolute;
+    z-index: -1;
+    text-align: justify;
+    margin-left: 15px;
+    width: 300px;
+    display:inline-block;
+    background-color:#ffffffba;
+    top:20%;
+    left:11%;
 }
 
 #selector{
-	
-	position:relative;
-	background-color: rgb(255, 255, 255);
-	border: 3px solid #050505;
-	z-index: 100;
-	width:50%;
-	font-family:Tw Cen MT;
+    
+    position:relative;
+    background-color: rgb(255, 255, 255);
+    border: 3px solid #050505;
+    z-index: 100;
+    width:50%;
+    font-family:Tw Cen MT;
 
-	transform:translate(0%,100%);
+    transform:translate(0%,100%);
 
 }
 #f{
-	font-family:Tw Cen MT;
-	transform: translate(0%, 0%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    font-family:Tw Cen MT;
+    transform: translate(0%, 0%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -196,14 +201,15 @@
     text-align: center;
 }
 #f:hover{
-    background-color: black;
+   background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
     
 }
 
 #d{
-	font-family:Tw Cen MT;
-	transform: translate(0%, 0%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    font-family:Tw Cen MT;
+    transform: translate(0%, 0%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -215,13 +221,14 @@
     text-align: center;
 }
 #d:hover{
-    background-color: black;
+background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
     
 }
 #m{
-	font-family:Tw Cen MT;
-	transform: translate(0%, 0%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    font-family:Tw Cen MT;
+    transform: translate(0%, 0%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -233,14 +240,15 @@
     text-align: center;
 }
 #m:hover{
-    background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
     
 }
 
 #salir{
-	font-family:Tw Cen MT;
-	transform: translate(600%, 1650%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    font-family:Tw Cen MT;
+    transform: translate(600%, 1650%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -253,14 +261,15 @@
     
 }
 #salir:hover{
-    background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         color: white;
     
 }
 
 #comenzar{
-	font-family:Tw Cen MT;
-	transform: translate(350%, 1650%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    font-family:Tw Cen MT;
+    transform: translate(350%, 1650%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -273,44 +282,44 @@
     
 }
 #comenzar:hover{
-    background-color: black;
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);;
         color: white;
     
 }
 
 #console {
-	border: 1px solid #CCCCCC;
-	border-right-color: #999999;
-	border-bottom-color: #999999;
-	height: 453px;
-	overflow-y: scroll;
-	font-family:Tw Cen MT;
-	font-size:15px;
-	padding-left: 5px;
-	padding-right: 5px;
-	width: 100%;
+    border: 1px solid #CCCCCC;
+    border-right-color: #999999;
+    border-bottom-color: #999999;
+    height: 453px;
+    overflow-y: scroll;
+    font-family:Tw Cen MT;
+    font-size:15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 100%;
 }
 
 #console p {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 #partidas-container{
 
-	display:inline-block;
-	top:20%;
-	right:1%;
-	
-	position: absolute;
-	border: 1px solid #CCCCCC;
-	border-right-color: #999999;
-	border-bottom-color: #999999;
-	background-color:#ffffffba;
-	height: 480px;
-	overflow-y: scroll;
-	padding-right: 10px;
-	width: 30%;
+    display:inline-block;
+    top:20%;
+    right:1%;
+    
+    position: absolute;
+    border: 1px solid #CCCCCC;
+    border-right-color: #999999;
+    border-bottom-color: #999999;
+    background-color:#ffffffba;
+    height: 480px;
+    overflow-y: scroll;
+    padding-right: 10px;
+    width: 30%;
         z-index: -1;
 }
 
@@ -319,10 +328,10 @@
 
 #partidas div{
 
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-top: 5%;
-	margin-bottom: 20 px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5%;
+    margin-bottom: 20 px;
 
 }
 body {
@@ -333,16 +342,16 @@ body {
 #partidas{
         position: relative;
         margin-left: 10px;
-	margin-right: 10px;
-	margin-top: 50 px;
-	text-align:justify;
-	font-size: 17px;
-	font-family:Tw Cen MT;
-	z-index: -1;
+    margin-right: 10px;
+    margin-top: 50 px;
+    text-align:justify;
+    font-size: 17px;
+    font-family:Tw Cen MT;
+    z-index: -1;
 }
 #unirse-btn{
-
-	transform: translate(10%, 0%);
+        -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    transform: translate(10%, 0%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -354,5 +363,8 @@ body {
     text-align: center;
 }
 
-
-/*cambiar en el js # de unirse*/
+#unirse-btn:hover{
+    background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);;
+        color: white;
+    
+}
