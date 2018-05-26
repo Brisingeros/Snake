@@ -108,15 +108,19 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     SnakeGame sala = salas.get(nombreSala);
                     
+                    session.getAttributes().replace(SALA_ATT, "none");         //.put(SALA_ATT, "none");
+                    
                     snek.setInGame(false);
                     
                     //Hasta aquí, la sala existe
                     
                     sala.removeSnake(snek);
                     
+                    snek.resetState();
+                    
                     int num;
                     
-                    synchronized(sala){
+                    synchronized(sala){//////////////////////////////////////////////MIRAR
                         num = sala.getNum();
                     }
                     
@@ -124,7 +128,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     if(jugando){
                     
-                        if(num <= 1){
+                        if(num == 1){
                             
                             Snake aux = (Snake) sala.getSnakes().toArray()[0];
                             
@@ -145,7 +149,11 @@ public class SnakeHandler extends TextWebSocketHandler {
                             }
                             
                             
-                        } else{
+                        } else if(num == 0){
+                        
+                            salas.remove(nombreSala);
+                        
+                        }else{
                             
                             String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
 
@@ -210,8 +218,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                                     Snake ss = (Snake) session.getAttributes().get(SNAKE_ATT);
                                     ss.setInGame(true);
                                     sala.addSnake(ss);
+                                    
+                                    System.out.println("//////////////////////////////////////LA SALA ES: " + params[0]);
 
-                                    session.getAttributes().replace(SALA_ATT, params[0]);
+                                    session.getAttributes().replace(SALA_ATT, params[0]);  //////////////////////////////////////////////////
 
                                     ArrayList<String> jugadores = new ArrayList<>();
                                     for(Snake s : sala.getSnakes()){
@@ -257,6 +267,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 
                                 try {
                                     if(sem.tryAcquire(5, 1000, TimeUnit.MILLISECONDS)){
+                                        
+                                        
                                         
                                         ObjectNode difusion = mapper.createObjectNode();
                                         difusion.put("type","senal");
@@ -537,23 +549,25 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             puntuaciones.add(nP);
             
+            //System.out.println("/////////////////////////" + nP[0] + " " + nP[1]);
+            
             Collections.sort(puntuaciones, new Comparator(){
-                
+
                 @Override
                 public int compare(Object o1, Object o2) {
                     String[] aux = (String[])o1;
                     int p1 = Integer.parseInt(aux[1]);
-                
+
                     aux = (String[])o2;
                     int p2 = Integer.parseInt(aux[1]);
-                    
-                    return (p1 > p2) ? 1:-1;
+
+                    return (p1 > p2) ? -1:1;
                 }
-            
+
             });
             
             CopyOnWriteArrayList<String[]> aux = new CopyOnWriteArrayList<>();
-            int tamaño = (10>puntuaciones.size()-1) ? puntuaciones.size()-1:10;
+            int tamaño = (10>=puntuaciones.size()) ? puntuaciones.size():10;
             
             for(int i = 0; i < tamaño; i++){
                 aux.add(puntuaciones.get(i));

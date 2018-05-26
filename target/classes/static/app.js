@@ -58,7 +58,7 @@ class Snake {
 		}
 	}
 }
-
+//////////////////////////////////////////////////////////////////////////
 function salir(){
 
 	
@@ -78,7 +78,7 @@ function salir(){
 	borrarDiv('#salaActual');
 	document.getElementById("partidas-container").style.display = 'inline-block';
 	document.getElementById("serpiente").style.display = "block";
-	document.getElementById("ranking").style.display = "block";
+	document.getElementById("ranking").style.display = "inline-block";
 	salaP = null;
 
 }
@@ -597,14 +597,16 @@ $(document).ready(function(){
 			
 			console.log(JSON.parse(data));
 			game.context.clearRect(0, 0, 640, 480);
-	
+                        document.getElementById("muro").style.display="inline-block";
+                        
 			var puntos = JSON.parse(data);
 			for(var i = 0; i < puntos.length; i++){
 	
-				var array = JSON.parse(puntos[i]);
+				//var array = JSON.parse(puntos[i]);
+				var array = puntos[i];
 				var div = document.createElement("div");
 				div.textContent = array[0] + " : " + array[1]; //0 nombre, 1 puntos
-				document.getElementById("muro").appendChild(array);
+				document.getElementById("muro").appendChild(div);
 	
 			}
 
@@ -613,12 +615,12 @@ $(document).ready(function(){
 			sal.id = "salirRanking";
 			sal.addEventListener("click",function(){
 
-				borrarDiv('#muro');
+				 document.getElementById("muro").style.display="none";
 				document.getElementById("botonesRanking").removeChild(sal);
 				game.context.clearRect(0,0,640,480);
 				document.getElementById("partidas-container").style.display = 'inline-block';
 				document.getElementById("serpiente").style.display = "block";
-				document.getElementById("ranking").style.display = "block";
+				document.getElementById("ranking").style.display = "inline-block";
 
 			});
 
@@ -690,4 +692,4 @@ function crearDiv(info){
 
 game = new Game();
 
-game.initialize()
+game.initialize();

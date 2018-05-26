@@ -65,6 +65,7 @@
     position:relative;
     transform: translate(145%, 37%);
     z-index:100;
+    display:block;
 }
 
 #actualizar-btn:hover {
@@ -105,6 +106,7 @@ color: white;
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
+    display:inline-block;
     
 }
 #ranking:hover {
@@ -262,7 +264,7 @@ background: linear-gradient(to right, rgb(169, 3, 3) 0%, rgba(143,2,34,1) 44%, r
 #salir{
         -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     font-family:Tw Cen MT;
-    transform: translate(600%, 1650%);
+    transform: translate(650%, 1700%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;
@@ -283,7 +285,7 @@ background: linear-gradient(to right, rgb(169, 3, 3) 0%, rgba(143,2,34,1) 44%, r
 #comenzar{
         -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     font-family:Tw Cen MT;
-    transform: translate(350%, 1650%);
+    transform: translate(370%, 1700%);
     -ms-transform: translate(-50%, -50%);
     background-color: #f1f1f1;
     color: black;

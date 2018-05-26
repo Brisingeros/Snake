@@ -70,8 +70,13 @@ public class SnakeGame {
                 
 		int count = numSnakes.decrementAndGet();
 
+                
 		if (count == 0) {
-			stopTimer();
+			//stopTimer();
+                        if (scheduler != null) {
+                            scheduler.shutdown();
+                        }
+                        //this.setInGame(false);
 		}
 	}
 
@@ -176,7 +181,7 @@ public class SnakeGame {
                     scheduler.shutdown();
                 }
                 
-                this.inGame = false;
+                //this.setInGame(false);
                 //Avisa a los js que ha acabado la partida
                 String[] aux = this.getMayorPuntuacion();
                 

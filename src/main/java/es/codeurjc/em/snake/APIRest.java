@@ -49,6 +49,10 @@ public class APIRest {
         
         CopyOnWriteArrayList<String[]> aux = handler.getMuro();
         
+        for(String[] i : aux){
+            System.out.println("//////////////////////////////////////////////////////////////Nombre: " + i[0] + ",    Puntos: " + i[1]);
+        }
+        
         return gson.toJson(aux);
         
     }
