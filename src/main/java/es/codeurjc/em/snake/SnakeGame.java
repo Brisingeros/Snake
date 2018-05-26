@@ -46,7 +46,9 @@ public class SnakeGame {
         }
 	public void addSnake(Snake snake) {
 
-		snakes.put(snake.getId(), snake);
+                synchronized(snake){
+                    snakes.put(snake.getId(), snake);
+                }
 
 		int count = numSnakes.getAndIncrement();
 
@@ -62,8 +64,10 @@ public class SnakeGame {
 
 	public void removeSnake(Snake snake) {
 
+            synchronized(snake){
 		snakes.remove(Integer.valueOf(snake.getId()));
-
+            }
+                
 		int count = numSnakes.decrementAndGet();
 
 		if (count == 0) {
@@ -145,10 +149,8 @@ public class SnakeGame {
 		for (Snake snake : getSnakes()) {
 			try {
 
-                                synchronized(snake){
-                                    System.out.println("Sending message " + message + " to " + snake.getId());
-                                    snake.sendMessage(message);
-                                }
+                                System.out.println("Sending message " + message + " to " + snake.getId());
+                                snake.sendMessage(message);
 
 			} catch (Throwable ex) {
 				System.err.println("Execption sending message to snake " + snake.getId());

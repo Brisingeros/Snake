@@ -38,7 +38,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
         
         private ConcurrentHashMap<String, SnakeGame> salas;
-        private ConcurrentHashMap<Key, Snake> sessions;
+        private ConcurrentHashMap<String, Snake> sessions;      //Name
         
         //Diccionario de funciones
         private ConcurrentHashMap<String, Function> Funciones;
@@ -192,9 +192,11 @@ public class SnakeHandler extends TextWebSocketHandler {
                     boolean entra = false;
                     Semaphore sem = new Semaphore(0);
                     
+                    SnakeGame sala = salas.get(params[0]);
+                    
                     while(!entra){
                         
-                        SnakeGame sala = salas.get(params[0]);
+                        synchronized(sala){
                             
                             if(sala.getNum() < 4){
                                 try {
@@ -236,9 +238,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                     
                                     if(sala.getNum() == 4){
                                         
-                                        ObjectNode n = mapper.createObjectNode();
-                                        n.put("type","jugar");
-                                        sala.broadcast(n.toString());
+                                        Funciones.get("comenzarPartida").ExecuteAction(params, session);
                                         
                                     }
                                     
@@ -273,6 +273,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                             }
                             
                             }
+                            
+                        }
                         
                     }
                     
@@ -290,9 +292,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                         int id = snakeIds.getAndIncrement();
 
                         Snake s = new Snake(id, params[0], session);
-                        Key newKey = new Key(params[0], session.toString());
 
-                        if(sessions.containsKey(newKey)){
+                        if(sessions.containsKey(params[0])){
                         
                             try {
                                 //Mensaje acá pidiendo otro nombre
@@ -309,7 +310,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                             
                         } else{
                         
-                            sessions.put(newKey, s);
+                            sessions.put(params[0], s);
                             session.getAttributes().put(SNAKE_ATT, s);
                             
                             //Mensaje conexión
@@ -340,16 +341,25 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.Funciones.put("comenzarPartida",new Function(){
                 
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) {
+                public void ExecuteAction(String[] params, WebSocketSession session) {          //NombrePartida
                     
                     try {
                         SnakeGame sala = salas.get(params[0]);
-                        sala.setInGame(true);
-                        sala.startTimer();
-                        ObjectNode n = mapper.createObjectNode();
-                        n.put("type","jugar");
                         
-                        sala.broadcast(n.toString());
+                        synchronized(sala){
+                            
+                            if(!sala.isInGame()){
+                        
+                                sala.setInGame(true);
+                                sala.startTimer();
+                                ObjectNode n = mapper.createObjectNode();
+                                n.put("type","jugar");
+                                
+                                sala.broadcast(n.toString());
+                                
+                            }
+                        }
+                           
                     } catch (Exception ex) {
                         Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -368,12 +378,16 @@ public class SnakeHandler extends TextWebSocketHandler {
                         
                         SnakeGame sg = salas.get(s);
                         
-                        if(sg.getNum() > 0 && sg.getNum() < 4 && sg.getDif() == lg){
-                            para[0] = s;
+                        synchronized(sg){
+                        
+                            if(sg.getNum() > 0 && sg.getNum() < 4 && sg.getDif() == lg){
+                                para[0] = s;
+
+                                Funciones.get("unirGame").ExecuteAction(para, session);
+
+                                return;
+                            }
                             
-                            Funciones.get("unirGame").ExecuteAction(para, session);
-                            
-                            return;
                         }
                         
                     }
@@ -442,10 +456,17 @@ public class SnakeHandler extends TextWebSocketHandler {
                 String name = snek.getName();
                 //Quitamos la serpiente de la sala y mandamos mensaje
                 if(!s.equals("none")){
-                    salas.get(s).removeSnake(snek);
-                    String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
+                    
+                    SnakeGame sala = salas.get(s);
+                    
+                    synchronized(sala){
+                    
+                        salas.get(s).removeSnake(snek);
+                        String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
 
-                    salas.get(s).broadcast(msg);
+                        salas.get(s).broadcast(msg);
+                        
+                    }
                     
                 }
                 
@@ -455,10 +476,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                 difusion.put("name", name);
                 
                 //Quitamos la serpiente de sesiones
-                Key newKey = new Key("placeholder", session.toString());
-                sessions.remove(newKey);
+                sessions.remove(snek.getName());
 
-                //Mandamos mensaje
+                //Mandamos mensaje, ya sincronizado en sendmessage
                 for(Snake snk : sessions.values()){
                     try {
                         snk.sendMessage(difusion.toString());
@@ -474,10 +494,18 @@ public class SnakeHandler extends TextWebSocketHandler {
             ArrayList<String[]> sol = new ArrayList<>();
             String[] aux;
             for(String s : this.salas.keySet()){
+                
+                SnakeGame sala = salas.get(s);
+                
                 aux = new String[3];
                 aux[0] = s;
-                aux[1] = String.valueOf(salas.get(s).getNum());
-                aux[2] = String.valueOf(salas.get(s).getDif());
+                
+                synchronized(sala){
+                
+                    aux[1] = String.valueOf(salas.get(s).getNum());
+                    aux[2] = String.valueOf(salas.get(s).getDif());
+                
+                }
                 
                 sol.add(aux);
                 
@@ -504,6 +532,7 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             Collections.sort(puntuaciones, new Comparator(){
                 
+                @Override
                 public int compare(Object o1, Object o2) {
                     String[] aux = (String[])o1;
                     int p1 = Integer.parseInt(aux[1]);
@@ -516,13 +545,14 @@ public class SnakeHandler extends TextWebSocketHandler {
             
             });
             
-            if(puntuaciones.size() >= 10)
-                
-                puntuaciones = (CopyOnWriteArrayList<String[]>) puntuaciones.subList(0, 10);
+            CopyOnWriteArrayList<String[]> aux = new CopyOnWriteArrayList<>();
+            int tamaño = (10>puntuaciones.size()-1) ? puntuaciones.size()-1:10;
             
-            else
-                
-                puntuaciones = (CopyOnWriteArrayList<String[]>) puntuaciones.subList(0, puntuaciones.size());
+            for(int i = 0; i < tamaño; i++){
+                aux.add(puntuaciones.get(i));
+            }
+            
+            puntuaciones = aux;
             
         }
 

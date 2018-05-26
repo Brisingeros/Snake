@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,8 +17,6 @@ public class APIRest {
     private final Gson gson = new Gson();
     
     private final ObjectMapper mapper = new ObjectMapper();
-    
-    
     
     public static void setSnakeHandler(SnakeHandler hand){
         handler = hand;
