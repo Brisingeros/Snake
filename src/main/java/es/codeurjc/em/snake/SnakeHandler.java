@@ -481,7 +481,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                 difusion.put("name", name);
                 
                 //Quitamos la serpiente de sesiones
-                sessions.remove(snek.getName());
+                synchronized(snek){
+                    sessions.remove(snek.getName());
+                }
 
                 //Mandamos mensaje, ya sincronizado en sendmessage
                 for(Snake snk : sessions.values()){
