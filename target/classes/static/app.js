@@ -407,8 +407,11 @@ class Game {
 									game.context.clearRect(0,0,640,480);
 									game.context.font="20pt Verdana";
 									game.context.fillStyle = "#CCCCCC";
+
+									if(packet == null)
+										game.context.fillText("¡Empate!",90,240);
+									else
 									game.context.fillText("¡Ha ganado: " + packet.ganador + " con \n" + packet.puntos + " puntos!",90,240);
-                                                                        
                                     window.setTimeout (salir, 2000);
 								}, 2000);
 								

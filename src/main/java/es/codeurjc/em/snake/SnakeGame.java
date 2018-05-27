@@ -238,8 +238,9 @@ public class SnakeGame {
 
                         aux[0] = s.getName();
                         aux[1] = Integer.toString(pts);
+                        
                     }
-                
+                    
                 }
                 
             }

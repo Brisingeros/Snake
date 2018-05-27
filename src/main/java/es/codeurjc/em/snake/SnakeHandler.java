@@ -598,31 +598,56 @@ public class SnakeHandler extends TextWebSocketHandler {
         
         public static void addPunto(String[] nP){
             
-            puntuaciones.add(nP);
+            if(colRanking(nP)){
             
-            Collections.sort(puntuaciones, new Comparator(){
+                Collections.sort(puntuaciones, new Comparator(){
 
-                @Override
-                public int compare(Object o1, Object o2) {
-                    String[] aux = (String[])o1;
-                    int p1 = Integer.parseInt(aux[1]);
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        String[] aux = (String[])o1;
+                        int p1 = Integer.parseInt(aux[1]);
 
-                    aux = (String[])o2;
-                    int p2 = Integer.parseInt(aux[1]);
+                        aux = (String[])o2;
+                        int p2 = Integer.parseInt(aux[1]);
 
-                    return (p1 > p2) ? -1:1;
+                        return (p1 > p2) ? -1:1;
+                    }
+
+                });
+
+                CopyOnWriteArrayList<String[]> aux = new CopyOnWriteArrayList<>();
+                int tamaño = (10>=puntuaciones.size()) ? puntuaciones.size():10;
+
+                for(int i = 0; i < tamaño; i++){
+                    aux.add(puntuaciones.get(i));
                 }
 
-            });
-            
-            CopyOnWriteArrayList<String[]> aux = new CopyOnWriteArrayList<>();
-            int tamaño = (10>=puntuaciones.size()) ? puntuaciones.size():10;
-            
-            for(int i = 0; i < tamaño; i++){
-                aux.add(puntuaciones.get(i));
+                puntuaciones = aux;
+                
             }
             
-            puntuaciones = aux;
+        }
+        
+        
+        public static boolean colRanking(String[] nP){
+            
+            for(String[] st : puntuaciones){
+            
+                if(st[0].equals(nP[0])){
+                    
+                    if(Integer.parseInt(st[1]) > Integer.parseInt(nP[1])){
+                        puntuaciones.remove(st);
+                        puntuaciones.add(nP);
+                        return true;
+                    } else{
+                        return false;
+                    }
+                    
+                }
+            
+            }
+            
+            return false;
             
         }
 
