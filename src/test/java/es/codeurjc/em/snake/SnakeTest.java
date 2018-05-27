@@ -139,7 +139,7 @@ public class SnakeTest {
             
         }
         
-        @Test
+        //@Test
         public void testInicioManual() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -197,7 +197,7 @@ public class SnakeTest {
             
         }
             
-        @Test
+        //@Test
         public void testFinJuego() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -329,7 +329,7 @@ public class SnakeTest {
             wsc[0].sendMessage(nmsg4);
             
             
-            Thread.sleep(2000); //Esperamos para que el que se encuentra en espera sepa que tiene un hueco
+            Thread.sleep(6000); //Esperamos para que el que se encuentra en espera sepa que tiene un hueco
 
             //Comprobar el mensaje
             String msg = firstMsg.get();

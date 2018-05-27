@@ -34,7 +34,7 @@
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
-     display:inline-block;
+     
 
    
 }
@@ -45,11 +45,25 @@
 }
 
 #cancelar{
+    
+    top:25%;
+    left:-25%;
+    font-family:Tw Cen MT black;
+    font-size:30px;
+    
+    border: 1px solid #CCCCCC;
+    border-right-color: #999999;
+    border-bottom-color: #999999;
+    background-color:#ffffffba;
+    height: 90px;
+    width: 300px;
+    
+    z-index: 100;
     transform:translate(1200px,110px);
- font-size: 20px;
- font-family:Tw Cen MT black;
+    font-size: 20px;
+    font-family:Tw Cen MT black;
 
- color:white;
+
 }
 
 #salirRanking{

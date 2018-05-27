@@ -432,6 +432,7 @@ class Game {
 
 function espera(){
 
+        borrarDiv('#cancelar');
 	var n = document.getElementById("cancelar");
 	n.style.display = 'inline-block';
 	n.innerHTML = "Intentando unirse \n a la sala...";
@@ -448,7 +449,7 @@ function espera(){
 		}
 
 		game.socket.send(JSON.stringify(ob));
-		borrarDiv('#cancelar');
+		n.style.display = 'none';
 		
 	});
 
