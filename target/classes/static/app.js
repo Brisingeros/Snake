@@ -325,6 +325,9 @@ class Game {
                     var packet = JSON.parse(message.data);
 
                     switch (packet.type) {
+						case 'esperaEntrar': 
+								espera();
+								break;
 						case 'update':
                                 for (var i = 0; i < packet.data.length; i++) {
 
@@ -426,6 +429,31 @@ class Game {
 	}
 }
 
+function espera(){
+
+	var n = document.getElementById("cancelar");
+	n.style.display = 'inline-block';
+	n.innerHTML = "Intentando unirse \n a la sala...";
+	var boton = document.createElement("button");
+	boton.textContent = "Cancelar";
+	boton.id = "cancelarEspera";
+	boton.addEventListener("click", function(){
+
+		var ob = {
+
+			funcion: "cancelarEspera",
+			params: [name]
+
+		}
+
+		game.socket.send(JSON.stringify(ob));
+		borrarDiv('#cancelar');
+		
+	});
+
+	n.appendChild(boton);
+
+}
 function addListaJugadores(jugadores){
 
 	$('#lista').empty();
@@ -601,7 +629,7 @@ $(document).ready(function(){
 			console.log(JSON.parse(data));
 			game.context.clearRect(0, 0, 640, 480);
                         document.getElementById("muro").style.display="inline-block";
-                        
+                        document.getElementById("muro").innerHTML='Ranking';
 			var puntos = JSON.parse(data);
 			for(var i = 0; i < puntos.length; i++){
 	

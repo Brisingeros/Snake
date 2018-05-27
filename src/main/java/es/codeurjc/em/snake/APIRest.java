@@ -28,7 +28,7 @@ public class APIRest {
         try {
             JsonNode node = mapper.readTree(nameGame);
             
-            handler.addGame(node.get("name").asText(), node.get("dif").asLong());
+            handler.addGame(node.get("name").asText(), node.get("dif").asLong(), node.get("creador").asText());
         } catch (IOException ex) {
             Logger.getLogger(APIRest.class.getName()).log(Level.SEVERE, null, ex);
         }

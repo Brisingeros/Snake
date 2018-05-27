@@ -3,7 +3,6 @@ package es.codeurjc.em.snake;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +27,7 @@ public class SnakeGame {
         //Dificultad y modo tiene que ir aquí.
         //Dificultad = 1 fácil, 2 medio, 4 difícil
         private long difficulty = 1;
-        
+        private String creador;
         private boolean inGame;
 
 	private ScheduledExecutorService scheduler;
@@ -36,12 +35,13 @@ public class SnakeGame {
         private Comida food;
         private Gson gson = new Gson();
         
-        public SnakeGame(long dif){
+        public SnakeGame(long dif, String c){
         
             snakes = new ConcurrentHashMap<>();
             numSnakes = new AtomicInteger();
             inGame = false;
             difficulty = dif;
+            creador = c;
             
         }
 	public void addSnake(Snake snake) {
@@ -225,6 +225,10 @@ public class SnakeGame {
         public void setInGame(boolean inGame) {
             this.inGame = inGame;
         }
+
+        public String getCreador() {
+            return creador;
+        }        
         
         public String[] getMayorPuntuacion(){
             

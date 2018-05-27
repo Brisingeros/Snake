@@ -12,6 +12,7 @@ public class Snake {
 
 	private static final int DEFAULT_LENGTH = 5;
 
+        private boolean enEspera;
 	private final int id;
         private ObjectMapper mapper = new ObjectMapper();
         private int puntos;
@@ -33,8 +34,17 @@ public class Snake {
                 this.name = name;
                 this.puntos = 0;
                 this.inGame = false;
+                this.enEspera = false;
 		resetState();
 	}
+
+        public boolean isEnEspera() {
+            return enEspera;
+        }
+
+        public void setEnEspera(boolean enEspera) {
+            this.enEspera = enEspera;
+        }
 
         public int getPuntos() {
             return puntos;
