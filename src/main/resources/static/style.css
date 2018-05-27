@@ -1,3 +1,4 @@
+
 #playground {
     width: 640px;
     height: 480px;
@@ -11,20 +12,16 @@
 }
 #muro{
     display:inline-block;
-    transform: translate(5%,28%);
-    left:550%;
+    transform: translate(95%,28%);
     font-family:Tw Cen MT black;
     font-size:30px;
-    position: absolute;
     border: 1px solid #CCCCCC;
     border-right-color: #999999;
     border-bottom-color: #999999;
     background-color:#ffffffba;
     height: 480px;
-    
-    
-    width: 480%;
-    position: relative;
+    width: 30%;
+    position:absolute ;
     z-index: 100;
 
 }
@@ -66,6 +63,7 @@
     transform: translate(145%, 37%);
     z-index:100;
     display:block;
+    width:auto;
 }
 
 #actualizar-btn:hover {

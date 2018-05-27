@@ -22,23 +22,23 @@ public class SnakeTest {
             try {
                 Application.main(new String[]{ "--server.port=9000" });
                 
-                String ndif = "{\"name\": \"prueba\", \"dif\": " + 1 + "}";
-                /*
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif).asJson();*/
-                
+                String ndif = "{\"name\":\"prueba\", \"dif\":" + 1 + "}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
+                        .body(ndif).asJson();/**/
+                
+                /*
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .field("dif", "1")
                         .field("name", "prueba")
-                        .field("dif", 1)
-                        .asJson();/**/
+                        .asJson();*/
                 
             } catch (UnirestException ex) {
                 Logger.getLogger(SnakeTest.class.getName()).log(Level.SEVERE, null, ex);
             } finally{
-                //Unirest.shutdown();
+                Unirest.shutdown();
             }
 	}
 		
@@ -109,7 +109,7 @@ public class SnakeTest {
             //Comprobar el mensaje
             String msg = firstMsg.get();
 
-                    assertTrue("The fist message should contain 'jugar', but it is "+msg, msg.contains("jugar"));
+                    assertTrue("The fist message should contain 'update', but it is "+msg, msg.contains("update"));
 
             
             for(int i = 0; i < wsc.length; i++){

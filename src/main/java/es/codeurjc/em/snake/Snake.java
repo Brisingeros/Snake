@@ -85,7 +85,7 @@ public class Snake {
 		sendMessage(n.toString());
 	}
 
-	protected void sendMessage(String msg) throws Exception {
+	protected synchronized void sendMessage(String msg) throws Exception {
 		this.session.sendMessage(new TextMessage(msg));
 	}
 

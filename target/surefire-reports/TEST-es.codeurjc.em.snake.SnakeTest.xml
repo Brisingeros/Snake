@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="es.codeurjc.em.snake.SnakeTest" time="2.049" tests="2" errors="0" skipped="0" failures="1">
+<testsuite name="es.codeurjc.em.snake.SnakeTest" time="2.056" tests="2" errors="0" skipped="0" failures="1">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_121\jre\bin"/>
@@ -14,6 +14,7 @@
     <property name="user.country" value="ES"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value=""/>
+    <property name="test" value="es.codeurjc.em.snake.SnakeTest"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="D:\Git\Entornos\Snake"/>
     <property name="java.runtime.version" value="1.8.0_121-b13"/>
@@ -43,7 +44,7 @@
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="C:\Program Files\Java\jdk1.8.0_121\jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=C:\Program Files\NetBeans 8.2\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 clean install"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dtest=es.codeurjc.em.snake.SnakeTest -Dmaven.ext.class.path=C:\Program Files\NetBeans 8.2\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 surefire:test"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="es"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -60,18 +61,18 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase name="testConnection" classname="es.codeurjc.em.snake.SnakeTest" time="0.031"/>
+  <testcase name="testConnection" classname="es.codeurjc.em.snake.SnakeTest" time="0.038"/>
   <testcase name="testInicioAutom" classname="es.codeurjc.em.snake.SnakeTest" time="2.018">
-    <failure message="The fist message should contain &apos;jugar&apos;, but it is {&quot;type&quot;:&quot;jugadorConecta&quot;,&quot;names&quot;:&quot;[\&quot;0\&quot;,\&quot;1\&quot;,\&quot;2\&quot;,\&quot;3\&quot;]&quot;}" type="java.lang.AssertionError">java.lang.AssertionError: The fist message should contain 'jugar', but it is {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
+    <failure message="The fist message should contain &apos;update&apos;, but it is {&quot;type&quot;:&quot;jugadorConecta&quot;,&quot;names&quot;:&quot;[\&quot;0\&quot;,\&quot;1\&quot;,\&quot;2\&quot;,\&quot;3\&quot;]&quot;}" type="java.lang.AssertionError">java.lang.AssertionError: The fist message should contain 'update', but it is {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 	at org.junit.Assert.fail(Assert.java:88)
 	at org.junit.Assert.assertTrue(Assert.java:41)
 	at es.codeurjc.em.snake.SnakeTest.testInicioAutom(SnakeTest.java:112)
 </failure>
-    <system-out><![CDATA[Connection closed. Session 1
-2018-05-26 22:54:53.729 ERROR 8244 --- [nio-9000-exec-3] w.s.h.ExceptionWebSocketHandlerDecorator : Unhandled error for ExceptionWebSocketHandlerDecorator [delegate=LoggingWebSocketHandlerDecorator [delegate=es.codeurjc.em.snake.SnakeHandler@486be205]]
+    <system-out><![CDATA[Connection closed. Session 0
+2018-05-27 12:21:26.361 ERROR 7320 --- [nio-9000-exec-4] w.s.h.ExceptionWebSocketHandlerDecorator : Unhandled error for ExceptionWebSocketHandlerDecorator [delegate=LoggingWebSocketHandlerDecorator [delegate=es.codeurjc.em.snake.SnakeHandler@7fe083b1]]
 
 java.lang.NullPointerException: null
-	at es.codeurjc.em.snake.SnakeHandler.afterConnectionClosed(SnakeHandler.java:474) ~[classes/:na]
+	at es.codeurjc.em.snake.SnakeHandler.afterConnectionClosed(SnakeHandler.java:511) ~[classes/:na]
 	at org.springframework.web.socket.handler.WebSocketHandlerDecorator.afterConnectionClosed(WebSocketHandlerDecorator.java:85) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
 	at org.springframework.web.socket.handler.LoggingWebSocketHandlerDecorator.afterConnectionClosed(LoggingWebSocketHandlerDecorator.java:72) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
 	at org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator.afterConnectionClosed(ExceptionWebSocketHandlerDecorator.java:78) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
@@ -93,47 +94,51 @@ java.lang.NullPointerException: null
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-8.5.11.jar:8.5.11]
 	at java.lang.Thread.run(Thread.java:745) [na:1.8.0_121]
 
-crearSerpiente [Ljava.lang.String;@daa982e
-crearSerpiente [Ljava.lang.String;@177bcb35
-crearSerpiente [Ljava.lang.String;@10b2c7d3
+crearSerpiente [Ljava.lang.String;@1675ccce
+crearSerpiente [Ljava.lang.String;@70a1f2d1
+crearSerpiente [Ljava.lang.String;@d745617
 Connected
 0 Se conecta a la sala con msg: {"funcion": "unirGame", "params": ["prueba"]}
-crearSerpiente [Ljava.lang.String;@23bdb10
+crearSerpiente [Ljava.lang.String;@25909062
 1 Se conecta a la sala con msg: {"funcion": "unirGame", "params": ["prueba"]}
 2 Se conecta a la sala con msg: {"funcion": "unirGame", "params": ["prueba"]}
-unirGame [Ljava.lang.String;@58fce7f3
-unirGame [Ljava.lang.String;@45a4c2a1
 3 Se conecta a la sala con msg: {"funcion": "unirGame", "params": ["prueba"]}
-unirGame [Ljava.lang.String;@7b7295fe
-unirGame [Ljava.lang.String;@b5da683
-2018-05-26 22:54:53.760 ERROR 8244 --- [pool-1-thread-2] es.codeurjc.em.snake.SnakeHandler        : null
+unirGame [Ljava.lang.String;@6256ec5f
+unirGame [Ljava.lang.String;@46e95b80
+unirGame [Ljava.lang.String;@1db10dec
+unirGame [Ljava.lang.String;@43b7324e
+2018-05-27 12:21:26.371 ERROR 7320 --- [pool-1-thread-5] es.codeurjc.em.snake.SnakeHandler        : null
 
-java.lang.IllegalStateException: The remote endpoint was in state [TEXT_PARTIAL_WRITING] which is an invalid state for called method
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.checkState(WsRemoteEndpointImplBase.java:1224) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.textPartialStart(WsRemoteEndpointImplBase.java:1182) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:222) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:49) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:203) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
-	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:101) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
-	at es.codeurjc.em.snake.Snake.sendMessage(Snake.java:89) ~[classes/:na]
-	at es.codeurjc.em.snake.SnakeHandler$6.ExecuteAction(SnakeHandler.java:347) ~[classes/:na]
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454) [classes/:na]
+java.lang.NullPointerException: null
+	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:239) ~[classes/:na]
+	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:491) [classes/:na]
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) ~[na:1.8.0_121]
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) ~[na:1.8.0_121]
 	at java.lang.Thread.run(Thread.java:745) ~[na:1.8.0_121]
 
-2018-05-26 22:54:53.760 ERROR 8244 --- [pool-1-thread-1] es.codeurjc.em.snake.SnakeHandler        : null
+2018-05-27 12:21:26.372 ERROR 7320 --- [pool-1-thread-8] es.codeurjc.em.snake.SnakeHandler        : null
 
-java.lang.IllegalStateException: The remote endpoint was in state [TEXT_PARTIAL_WRITING] which is an invalid state for called method
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.checkState(WsRemoteEndpointImplBase.java:1224) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.textPartialStart(WsRemoteEndpointImplBase.java:1182) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:222) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:49) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:203) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
-	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:101) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
-	at es.codeurjc.em.snake.Snake.sendMessage(Snake.java:89) ~[classes/:na]
-	at es.codeurjc.em.snake.SnakeHandler$6.ExecuteAction(SnakeHandler.java:347) ~[classes/:na]
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454) [classes/:na]
+java.lang.NullPointerException: null
+	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:239) ~[classes/:na]
+	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:491) [classes/:na]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) ~[na:1.8.0_121]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) ~[na:1.8.0_121]
+	at java.lang.Thread.run(Thread.java:745) ~[na:1.8.0_121]
+
+2018-05-27 12:21:26.372 ERROR 7320 --- [pool-1-thread-6] es.codeurjc.em.snake.SnakeHandler        : null
+
+java.lang.NullPointerException: null
+	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:239) ~[classes/:na]
+	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:491) [classes/:na]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) ~[na:1.8.0_121]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) ~[na:1.8.0_121]
+	at java.lang.Thread.run(Thread.java:745) ~[na:1.8.0_121]
+
+2018-05-27 12:21:26.373 ERROR 7320 --- [pool-1-thread-7] es.codeurjc.em.snake.SnakeHandler        : null
+
+java.lang.NullPointerException: null
+	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:239) ~[classes/:na]
+	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:491) [classes/:na]
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) ~[na:1.8.0_121]
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) ~[na:1.8.0_121]
 	at java.lang.Thread.run(Thread.java:745) ~[na:1.8.0_121]
@@ -141,22 +146,9 @@ java.lang.IllegalStateException: The remote endpoint was in state [TEXT_PARTIAL_
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
-2018-05-26 22:54:53.760 ERROR 8244 --- [pool-1-thread-3] es.codeurjc.em.snake.SnakeHandler        : null
-
-java.lang.IllegalStateException: The remote endpoint was in state [TEXT_PARTIAL_WRITING] which is an invalid state for called method
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.checkState(WsRemoteEndpointImplBase.java:1224) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.textPartialStart(WsRemoteEndpointImplBase.java:1182) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase.sendPartialString(WsRemoteEndpointImplBase.java:222) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.apache.tomcat.websocket.WsRemoteEndpointBasic.sendText(WsRemoteEndpointBasic.java:49) ~[tomcat-embed-websocket-8.5.11.jar:8.5.11]
-	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:203) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
-	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:101) ~[spring-websocket-4.3.7.RELEASE.jar:4.3.7.RELEASE]
-	at es.codeurjc.em.snake.Snake.sendMessage(Snake.java:89) ~[classes/:na]
-	at es.codeurjc.em.snake.SnakeHandler$6.ExecuteAction(SnakeHandler.java:347) ~[classes/:na]
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454) [classes/:na]
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) ~[na:1.8.0_121]
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) ~[na:1.8.0_121]
-	at java.lang.Thread.run(Thread.java:745) ~[na:1.8.0_121]
-
+TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
+TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
+TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
@@ -168,30 +160,5 @@ TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 TestMessage: {"type":"jugadorConecta","names":"[\"0\",\"1\",\"2\",\"3\"]"}
 ]]></system-out>
-    <system-err><![CDATA[Exception in thread "pool-1-thread-6" Exception in thread "pool-1-thread-7" Exception in thread "pool-1-thread-5" Exception in thread "pool-1-thread-8" java.lang.NullPointerException
-	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:213)
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-java.lang.NullPointerException
-	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:213)
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-java.lang.NullPointerException
-	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:213)
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-java.lang.NullPointerException
-	at es.codeurjc.em.snake.SnakeHandler$5.ExecuteAction(SnakeHandler.java:213)
-	at es.codeurjc.em.snake.SnakeHandler.lambda$handleTextMessage$0(SnakeHandler.java:454)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-]]></system-err>
   </testcase>
 </testsuite>
