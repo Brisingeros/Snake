@@ -47,11 +47,60 @@ public class SnakeTest {
                         .header("Content-Type", "application/json")
                         .body(ndif4).asJson();/**/
                 
+                //Test 5 parte1
+                
                 /*
-                String ndif5 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
+                String ndif5 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"100\"}";
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
-                        .body(ndif5).asJson();*/
+                        .body(ndif5).asJson();/**/
+                /*
+                String ndif6 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"101\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif6).asJson();
+
+                String ndif7 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"102\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif7).asJson();
+                
+                String ndif8 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"103\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif8).asJson();
+
+                String ndif9 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"104\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif9).asJson();
+
+                String ndif10 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"105\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif10).asJson();
+
+                String ndif11 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"106\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif11).asJson();
+
+                String ndif12 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"107\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif12).asJson();
+
+                String ndif13 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"108\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif13).asJson();
+
+                String ndif14 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"109\"}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif14).asJson();*/
+                
+                //Test 5 parte 2
                 
             } catch (UnirestException ex) {
                 Logger.getLogger(SnakeTest.class.getName()).log(Level.SEVERE, null, ex);

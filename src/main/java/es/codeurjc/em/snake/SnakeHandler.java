@@ -57,9 +57,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                         
                         Snake sn;
                         
-                        synchronized(session){
-                            sn = (Snake) session.getAttributes().get(SNAKE_ATT);
-                        }
+                        
+                        sn = (Snake) session.getAttributes().get(SNAKE_ATT);
                         
                         difusion.put("name",params[0]);
                         difusion.put("enPartida",sn.isInGame());
@@ -68,10 +67,8 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                         for(Snake s : sessions.values()){
 
-                            synchronized(s.getSession()){
-                                s.sendMessage(difusion.toString());
-                            }
-
+                            s.sendMessage(difusion.toString());
+                            
                         }
                         
                     }catch(IOException e){
@@ -95,10 +92,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
-                    synchronized(session){
-                        Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
+                    Snake s = (Snake) session.getAttributes().get(SNAKE_ATT);
                     
-                    
+                    synchronized(s){
                         Direction d = Direction.valueOf(params[0].toUpperCase());
                         
                         s.setDirection(d);
@@ -118,26 +114,34 @@ public class SnakeHandler extends TextWebSocketHandler {
                     SnakeGame sala;
                     int num;
                     
-                    synchronized(session){
-                        snek = (Snake) session.getAttributes().get(SNAKE_ATT);
-                        nombreSala = (String) session.getAttributes().get(SALA_ATT);
+
+                    snek = (Snake) session.getAttributes().get(SNAKE_ATT);
+                    nombreSala = (String) session.getAttributes().get(SALA_ATT);
                     
-                        session.getAttributes().replace(SALA_ATT, "none");
+                    sala = salas.get(nombreSala);
+                    
+                    //synchronized(sessions){
+                    
+                    synchronized(snek){
+                    
+                        session.getAttributes().replace(SALA_ATT, "none");//////////////////////////////////////////////////////
 
                         snek.setInGame(false);
                         snek.resetState();
                     }
                     
-                    sala = salas.get(nombreSala);
-
-                    ////////////////////////////////////////////////////////////////////////
-                    sala.removeSnake(snek);//Serpiente se va
+                    
+                    
+                    synchronized(sala){
+                        num = sala.getNum();
+                        ////////////////////////////////////////////////////////////////////////
+                        sala.removeSnake(snek);//Serpiente se va////////////////////////////////////////////////////////////////////
+                    }
                     
                     
                     //Mensaje vaciar sala serpiente que se va//
                     String vacio;
-                    for(Snake snS : sala.getSnakes()){
-                        synchronized(session){
+                    for(Snake snS : sala.getSnakes()){////////////////////////////////////////////////////dfipusdgfipusadgfiusagdf
                             try {
                                 vacio = String.format("{\"type\": \"leave\", \"id\": %d}", snS.getId());
 
@@ -147,7 +151,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                             catch (Exception ex) {
                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }
                     
                     }
                     //---//
@@ -167,8 +170,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                     synchronized(sala){
 
                         jugando = sala.isInGame();
-                        num = sala.getNum();
-                        
                     
                     
                         if(jugando){
@@ -182,9 +183,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                     difusion.put("type","finJuego");
                                     difusion.put("contenido", "Error en partida. Victoria por retirada");
 
-                                    synchronized(aux.getSession()){
-                                        aux.sendMessage(difusion.toString());
-                                    }
+                                    aux.sendMessage(difusion.toString());
                                 } catch (IOException ex) {
                                     Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                 } catch (Exception ex) {
@@ -201,22 +200,20 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 n.put("sala",nombreSala);
 
                                 for(Snake sk : sessions.values()){
-                                        synchronized(sk.getSession()){
                                             try {
                                                 sk.sendMessage(n.toString());
                                             } catch (Exception ex) {
                                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                             }
-                                        }
+                                        
                                 }
                                 //---//
 
                                 salas.remove(nombreSala, sala);
                             }
-
                         }
+                        //}
                     }
-
                 }
             
             });
@@ -231,24 +228,23 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     SnakeGame sala;
                     
-                    synchronized(params[0]){
-                        sala = salas.get(params[0]);
-                    }
+                    sala = salas.get(params[0]);
                     
-                    Snake ss;
-                                    
-                    synchronized(session){/////////////////////////////////////////
-                        ss = (Snake) session.getAttributes().get(SNAKE_ATT);
-                        //if(!ss.isEnEspera() && !ss.isInGame())
-                        if(!ss.isEnEspera())
-                            ss.setEnEspera(true);
-                    }
+                    Snake ss = (Snake) session.getAttributes().get(SNAKE_ATT);
+                    
+                    //synchronized(ss){
+                    
+                    //if(!ss.isEnEspera() && !ss.isInGame())
+                    if(!ss.isEnEspera())
+                        ss.setEnEspera(true);
                     
                     while(!entra && ss.isEnEspera() && sala!=null){
                         
-                        synchronized(sala){
                             
                             System.out.println("NUMERO DE JUGADORES: " + sala.getNum());
+                            
+                            synchronized(sala){
+                            
                             if(sala.getNum() < 4){
                                 
                                 try {
@@ -256,40 +252,44 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                                     //Snake ss;
                                     
-                                    synchronized(session){/////////////////////////////////////////
+                                    synchronized(ss){/////////////////////////////////////////
 
                                         ss.setEnEspera(false);
                                         ss.setInGame(true);
                                         
                                     }
                                     
-                                    sala.addSnake(ss);
+
+                                    session.getAttributes().replace(SALA_ATT, params[0]);//////////////////////////////////////////////////
+
                                     
                                     System.out.println("//////////////////////////////////////LA SALA ES: " + params[0]);
 
-                                    session.getAttributes().replace(SALA_ATT, params[0]);  //////////////////////////////////////////////////
+                                    //synchronized(sala){////////
+                                        sala.addSnake(ss);
+                                    //}
 
-                                    ArrayList<String> jugadores = new ArrayList<>();
-                                    for(Snake s : sala.getSnakes()){
-
-                                        jugadores.add(s.getName());
-                                    }
-                                    ObjectNode difusion = mapper.createObjectNode();
-                                    String players = gson.toJson(jugadores);
-                                    difusion.put("players",players);
-                                    difusion.put("sala",params[0]);
-                                    difusion.put("type","sala");
-                                    difusion.put("creador", sala.getCreador());
-
-                                    sala.broadcast(difusion.toString());
-                                    
-                                    if(sala.isInGame()){
-                                        ObjectNode n = mapper.createObjectNode();
-                                        n.put("type","jugar");
-                                        synchronized(session){
-                                            session.sendMessage(new TextMessage(n.toString()));
+                                        ArrayList<String> jugadores = new ArrayList<>();
+                                        for(Snake s : sala.getSnakes()){
+                                            jugadores.add(s.getName());
                                         }
-                                    }
+                                        ObjectNode difusion = mapper.createObjectNode();
+                                        String players = gson.toJson(jugadores);
+                                        difusion.put("players",players);
+                                        difusion.put("sala",params[0]);
+                                        difusion.put("type","sala");
+                                        difusion.put("creador", sala.getCreador());
+
+                                        sala.broadcast(difusion.toString());
+
+                                        if(sala.isInGame()){
+                                            ObjectNode n = mapper.createObjectNode();
+                                            n.put("type","jugar");
+
+                                            ss.sendMessage(n.toString());
+
+                                        }
+                                    //}
 
                                     StringBuilder sb = new StringBuilder();
                                     for (Snake snake : sala.getSnakes()) {
@@ -315,52 +315,53 @@ public class SnakeHandler extends TextWebSocketHandler {
                             } else{
                                 
                                 try {
-                                    
-                                    synchronized(session){
 
                                         //sn = (Snake) session.getAttributes().get(SNAKE_ATT);
-                                        if(espera && ss.isEnEspera()){
-                                        
-                                            Snake sn;
-                                            ObjectNode n = mapper.createObjectNode();
-                                            n.put("type","esperaEntrar");
-                                            espera = false;
-                                            session.sendMessage(new TextMessage(n.toString()));
-                                        
-                                        }
+                                        synchronized(ss){
+                                            if(espera && ss.isEnEspera()){
+
+                                                ObjectNode n = mapper.createObjectNode();
+                                                n.put("type","esperaEntrar");
+                                                espera = false;
+                                                ss.sendMessage(n.toString());
+
+                                            }
+                                        //}
                                         
                                     
-                                        if(ss.isEnEspera() && sem.tryAcquire(5, 1000, TimeUnit.MILLISECONDS)){
+                                            if(ss.isEnEspera() && sem.tryAcquire(5, 1000, TimeUnit.MILLISECONDS)){
 
-                                            ObjectNode difusion = mapper.createObjectNode();
-                                            difusion.put("type","senal");
-                                            difusion.put("contenido", "No pudo encontrarse una partida que se ajuste a las características. Crea una propia");
+                                                ObjectNode difusion = mapper.createObjectNode();
+                                                difusion.put("type","senal");
+                                                difusion.put("contenido", "No pudo encontrarse una partida que se ajuste a las características. Crea una propia");
 
-                                            
-                                            ss.setEnEspera(false);
-                                            session.sendMessage(new TextMessage(difusion.toString()));
-                                            
-                                            return;
 
-                                        } else{
-                                            
-                                            sem.release();
-                                            System.out.println("////////////////////////////////////////Intenta entrar");
-                                            
+
+                                                synchronized(ss){
+                                                    ss.setEnEspera(false);
+                                                }
+
+                                                ss.sendMessage(difusion.toString());
+
+                                                return;
+
+                                            } else{
+
+                                                sem.release();
+                                                System.out.println("////////////////////////////////////////Intenta entrar");
+
+                                            }
                                         }
-                                    }
+                                        
                                 } catch (InterruptedException | IOException ex) {
+                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (Exception ex) {
                                     Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             
                             }
-                            
                         }
-                        
                     }
-                    
-                    
-
                 }            
             
             });
@@ -368,14 +369,12 @@ public class SnakeHandler extends TextWebSocketHandler {
             
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
-                    
-                    synchronized(session){
                                         
                         Snake sn = (Snake) session.getAttributes().get(SNAKE_ATT);
-                        sn.setEnEspera(false);
-                        //sn.setInGame(true);
+                        synchronized(sn){
+                            sn.setEnEspera(false);
+                        }
 
-                    }
                     
                 }
             
@@ -396,9 +395,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 ObjectNode difusion = mapper.createObjectNode();
                                 difusion.put("type","falloNombre");
                                 
-                                synchronized(session){
-                                    session.sendMessage(new TextMessage(difusion.toString()));
-                                }
+                                session.sendMessage(new TextMessage(difusion.toString()));
                                 
                             } catch (IOException ex) {
                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -408,32 +405,27 @@ public class SnakeHandler extends TextWebSocketHandler {
                             
                         } else{
                         
-                            synchronized(s.getSession()){////////////////////////////////////////////////
-                                sessions.putIfAbsent(params[0], s);
-                                session.getAttributes().putIfAbsent(SNAKE_ATT, s);////////////////////////
-                            }
+                            sessions.putIfAbsent(params[0], s);
+                            session.getAttributes().putIfAbsent(SNAKE_ATT, s);////////////////////////
                             
                             //Mensaje conexión
                             ObjectNode difusion = mapper.createObjectNode();
                             ArrayList<String> jugadores = new ArrayList<>();
                             for(Snake snk : sessions.values()){
                             
-                                synchronized(snk.getSession()){
-                                    jugadores.add(snk.getName());
-                                }
+                                jugadores.add(snk.getName());
+
                             
                             }
                             difusion.put("type","jugadorConecta");
                             difusion.put("names", gson.toJson(jugadores));
                             
                             for(Snake snk : sessions.values()){
-                                synchronized(snk.getSession()){
                                     try {
                                         snk.sendMessage(difusion.toString());
                                     } catch (Exception ex) {
                                         Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                                     }
-                                }
                             }
                             
                         }
@@ -451,9 +443,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                         
                         SnakeGame sala;
                         
-                        synchronized(params[0]){
-                            sala = salas.get(params[0]);
-                        }
+                        sala = salas.get(params[0]);
+
                         
                         synchronized(sala){
                             
@@ -487,9 +478,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                         
                         SnakeGame sg;
                         
-                        synchronized(s){
-                            sg = salas.get(s);
-                        }
+
+                        sg = salas.get(s);
+
                         
                         synchronized(sg){
                         
@@ -512,11 +503,13 @@ public class SnakeHandler extends TextWebSocketHandler {
                             difusion.put("type","senal");
                             difusion.put("contenido", "No pudo encontrarse una partida que se ajuste a las características. Crea una propia");
                             
-                            synchronized(session){
-                                session.sendMessage(new TextMessage(difusion.toString()));
-                            }
+                            Snake snek = (Snake) session.getAttributes().get(SNAKE_ATT);
+                            
+                            snek.sendMessage(difusion.toString());
                             
                         } catch (IOException ex) {
+                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (Exception ex) {
                             Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -528,9 +521,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
             
-            synchronized(session){
-                session.getAttributes().putIfAbsent(SALA_ATT, "none");
-            }
+            session.getAttributes().putIfAbsent(SALA_ATT, "none");
             
 	}
         
@@ -567,11 +558,13 @@ public class SnakeHandler extends TextWebSocketHandler {
                 Snake snek;
                 String name;
                 
-                synchronized(session){
                 //Cogemos ambos attribs
                     s = (String) session.getAttributes().get(SALA_ATT);
                     snek = (Snake) session.getAttributes().get(SNAKE_ATT);
-                }
+                    
+                    SnakeGame sala = salas.get(s);
+                    
+                synchronized(sala){
                 
                 if(snek != null){
                     
@@ -580,10 +573,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     if(!s.equals("none")){
                         
-                        synchronized(session){
+                        //synchronized(session){
                             String[] vac = null;
                             this.Funciones.get("salirSala").ExecuteAction(vac, session);
-                        }
+                        //}
 
                     }
 
@@ -599,15 +592,17 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                     //Mandamos mensaje, ya sincronizado en sendmessage
                     for(Snake snk : sessions.values()){
-                        synchronized(snk.getSession()){
                             try {
                                 snk.sendMessage(difusion.toString());
                             } catch (Exception ex) {
                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }
                     }
+
                 }
+                }
+                
+                System.out.println("//////////////////////////////////////////////////////////////////////////////////Sesioneeeeees: " + sessions.size());
                 
 	}
         
