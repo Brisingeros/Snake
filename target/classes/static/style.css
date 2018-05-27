@@ -25,11 +25,37 @@
     z-index: 100;
 
 }
+#cancelarEspera{
+    -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
+    background-color: #f1f1f1;
+    font-size: 25px;
+    padding: 10px 30px;
+    font-family:Tw Cen MT black;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+     display:inline-block;
+
+   
+}
+#cancelarEspera:hover {
+    background: linear-gradient(to right, rgb(169, 3, 3) 0%, rgba(143,2,34,1) 44%, rgb(22, 1, 5) 100%);
+    color: white;
+
+}
+
+#cancelar{
+    transform:translate(1200px,110px);
+ font-size: 20px;
+ font-family:Tw Cen MT black;
+
+ color:white;
+}
 
 #salirRanking{
     -webkit-box-shadow: 4px 5px 9px -1px rgba(0,0,0,0.75);
     transform: translate(400%, 1350%);
-
+    display:inline-block;
     background-color: #f1f1f1;
     color: black;
     font-size: 25px;

@@ -344,6 +344,7 @@ class Game {
 								//this.sala(packet.name);
                                 break;
                         case 'leave':
+                        		Console.log("Se va: " + packet.id);
 								this.removeSnake(packet.id);
                                 break;
                         case 'dead':

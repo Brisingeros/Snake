@@ -23,32 +23,32 @@ public class SnakeTest {
             try {
                 Application.main(new String[]{ "--server.port=9000" });
                 
-                String ndif = "{\"name\":\"prueba\", \"dif\":" + 1 + "}";
+                String ndif = "{\"name\":\"prueba\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif).asJson();/**/
                 
-                String ndif2 = "{\"name\":\"prueba2\", \"dif\":" + 1 + "}";
+                String ndif2 = "{\"name\":\"prueba2\", \"dif\":" + 1 + ", \"creador\":\"20\"}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif2).asJson();/**/
                 
-                String ndif3 = "{\"name\":\"prueba3\", \"dif\":" + 1 + "}";
+                String ndif3 = "{\"name\":\"prueba3\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif3).asJson();/**/
                 
-                String ndif4 = "{\"name\":\"prueba4\", \"dif\":" + 1 + "}";
+                String ndif4 = "{\"name\":\"prueba4\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif4).asJson();/**/
                 
                 /*
-                String ndif5 = "{\"name\":\"prueba5\", \"dif\":" + 1 + "}";
+                String ndif5 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif5).asJson();*/
@@ -123,7 +123,7 @@ public class SnakeTest {
             }
             
 
-            Thread.sleep(5000);
+            Thread.sleep(1000);
 
             //Comprobar el mensaje
             String msg = firstMsg.get();
@@ -164,7 +164,7 @@ public class SnakeTest {
             
             for(int i = 0; i < wsc.length; i++){
             
-                String nmsg = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + i + "\"]}";
+                String nmsg = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + (i+20) + "\"]}";
                 wsc[i].sendMessage(nmsg);
                 
                 String nmsg2 = "{\"funcion\": \"unirGame\", \"params\": [\"" + "prueba2" + "\"]}";
