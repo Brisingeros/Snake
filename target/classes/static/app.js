@@ -15,7 +15,7 @@ Console.log = (function(message) {
 });
 
 var name;
-let creador = false;
+
 function myFunction()
 {
 
@@ -243,7 +243,7 @@ class Game {
 		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,19,space);
 
 	}
-	sala(jugadores,sala){
+	sala(jugadores,sala,creador){
 		
 		document.getElementById("serpiente").style.display = "none";
 		document.getElementById("ranking").style.display = "none";
@@ -263,7 +263,7 @@ class Game {
 		b1.addEventListener("click", salir);
 		
 		d.appendChild(b1);
-		if(jugadores.length >= 2 && creador){
+		if(jugadores.length >= 2 && name === creador){
 
 			var b2 = document.createElement("button");
 			b2.textContent = "Comenzar juego";
@@ -363,7 +363,7 @@ class Game {
 								break;
 						case 'sala' :		
 								document.getElementById("partidas-container").style.display = 'none';
-								this.sala(JSON.parse(packet.players),packet.sala);
+								this.sala(JSON.parse(packet.players),packet.sala,packet.creador);
 								break;
 						case 'jugar' : 
 								if(document.getElementById("comenzar")!= null)
@@ -452,7 +452,8 @@ function postPartida(d){
 	var ob = {
 		
 		name: salaP,
-		dif: d
+		dif: d,
+                creador: name
 
 	}
 	$.ajax({
@@ -469,7 +470,6 @@ function postPartida(d){
 	}).done(function(data){
 
 		console.log("Creada partida: " + salaP);
-		creador = true;
 		partidas();
 		
 	});

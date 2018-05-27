@@ -194,6 +194,8 @@ public class SnakeGame {
                 
                 SnakeHandler.addPunto(aux);
                 
+                this.setInGame(false);
+                
                 ObjectNode n = mapper.createObjectNode();
                 n.put("type","finPartida");
                 n.put("ganador", aux[0]);

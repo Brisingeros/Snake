@@ -631,24 +631,32 @@ public class SnakeHandler extends TextWebSocketHandler {
         
         public static boolean colRanking(String[] nP){
             
-            for(String[] st : puntuaciones){
+            if(puntuaciones.isEmpty()){
+                
+                puntuaciones.add(nP);
+
+            } else{
             
-                if(st[0].equals(nP[0])){
-                    
-                    if(Integer.parseInt(st[1]) > Integer.parseInt(nP[1])){
-                        puntuaciones.remove(st);
-                        puntuaciones.add(nP);
-                        return true;
-                    } else{
-                        return false;
+                for(String[] st : puntuaciones){
+            
+                    if(st[0].equals(nP[0])){
+
+                        if(Integer.parseInt(st[1]) < Integer.parseInt(nP[1])){
+                            puntuaciones.remove(st);
+                            puntuaciones.add(nP);
+                            return true;
+                        } else{
+                            return false;
+                        }
+
                     }
-                    
-                }
             
+                }
+                
             }
             
-            return false;
-            
+             return false;
+
         }
 
 }
