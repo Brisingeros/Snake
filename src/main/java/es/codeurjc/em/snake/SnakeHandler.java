@@ -297,8 +297,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                                         difusion.put("type","senal");
                                         difusion.put("contenido", "No pudo encontrarse una partida que se ajuste a las características. Crea una propia");
 
-                                        session.sendMessage(new TextMessage(difusion.toString()));
-
+                                        synchronized(session){
+                                            session.sendMessage(new TextMessage(difusion.toString()));
+                                        }
                                         return;
                                         
                                     } else{
@@ -340,7 +341,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 ObjectNode difusion = mapper.createObjectNode();
                                 difusion.put("type","falloNombre");
                                 
-                                session.sendMessage(new TextMessage(difusion.toString()));
+                                synchronized(session){
+                                    session.sendMessage(new TextMessage(difusion.toString()));
+                                }
                                 
                             } catch (IOException ex) {
                                 Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -350,10 +353,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                             
                         } else{
                         
-                            //synchronized(s){////////////////////////////////////////////////
+                            synchronized(s){////////////////////////////////////////////////
                                 sessions.putIfAbsent(params[0], s);
                                 session.getAttributes().putIfAbsent(SNAKE_ATT, s);////////////////////////
-                            //}
+                            }
                             
                             //Mensaje conexión
                             ObjectNode difusion = mapper.createObjectNode();
@@ -505,48 +508,57 @@ public class SnakeHandler extends TextWebSocketHandler {
             
 		System.out.println("Connection closed. Session " + session.getId());
 
+                String s;
+                Snake snek;
+                String name;
+                synchronized(session){
                 //Cogemos ambos attribs
-		String s = (String) session.getAttributes().get(SALA_ATT);
-                Snake snek = (Snake) session.getAttributes().get(SNAKE_ATT);
-                String name = snek.getName();
+		s = (String) session.getAttributes().get(SALA_ATT);
+                snek = (Snake) session.getAttributes().get(SNAKE_ATT);
                 
-                //Quitamos la serpiente de la sala y mandamos mensaje
-                if(!s.equals("none")){
-                    
-                    SnakeGame sala;
-                    
-                    synchronized(s){
-                        sala = salas.get(s);
-                    }
-                    
-                    synchronized(sala){
-                    
-                        sala.removeSnake(snek);
-                        String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
-
-                        sala.broadcast(msg);
-                        
-                    }
-                    
                 }
-                
-                //Mensaje desconexión
-                ObjectNode difusion = mapper.createObjectNode();
-                difusion.put("type","jugadorDesconecta");
-                difusion.put("name", name);
-                
-                //Quitamos la serpiente de sesiones
-                synchronized(snek){
-                    sessions.remove(snek.getName(), snek);
-                }
+                if(snek != null){
+                    
+                    name = snek.getName();
+                    //Quitamos la serpiente de la sala y mandamos mensaje
+                    if(!s.equals("none")){
 
-                //Mandamos mensaje, ya sincronizado en sendmessage
-                for(Snake snk : sessions.values()){
-                    synchronized(snk){
-                        try {
-                            snk.sendMessage(difusion.toString());
-                        } catch (Exception ex) {
-                            Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        SnakeGame sala;
+
+                        synchronized(s){
+                            sala = salas.get(s);
+                        }
+
+                        synchronized(sala){
+
+                            sala.removeSnake(snek);
+                            String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
+
+                            sala.broadcast(msg);
+
+                        }
+
+                    }
+
+
+                    //Mensaje desconexión
+                    ObjectNode difusion = mapper.createObjectNode();
+                    difusion.put("type","jugadorDesconecta");
+                    difusion.put("name", name);
+
+                    //Quitamos la serpiente de sesiones
+                    synchronized(snek){
+                        sessions.remove(snek.getName(), snek);
+                    }
+
+                    //Mandamos mensaje, ya sincronizado en sendmessage
+                    for(Snake snk : sessions.values()){
+                        synchronized(snk){
+                            try {
+                                snk.sendMessage(difusion.toString());
+                            } catch (Exception ex) {
+                                Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }
