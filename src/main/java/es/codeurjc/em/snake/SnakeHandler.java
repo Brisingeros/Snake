@@ -513,11 +513,12 @@ public class SnakeHandler extends TextWebSocketHandler {
                                     
                     synchronized(session){/////////////////////////////////////////
                         ss = (Snake) session.getAttributes().get(SNAKE_ATT);
-                        if(!ss.isEnEspera() && !ss.isInGame())
+                        //if(!ss.isEnEspera() && !ss.isInGame())
+                        if(!ss.isEnEspera())
                             ss.setEnEspera(true);
                     }
                     
-                    while(ss.isEnEspera() && !entra && sala!=null){
+                    while(!entra && sala!=null){
                         
                         synchronized(sala){
                             
@@ -646,6 +647,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                         
                         Snake sn = (Snake) session.getAttributes().get(SNAKE_ATT);
                         sn.setEnEspera(false);
+                        //sn.setInGame(true);
 
                     }
                     

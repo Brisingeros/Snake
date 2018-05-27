@@ -35,13 +35,13 @@ public class SnakeTest {
                         .header("Content-Type", "application/json")
                         .body(ndif2).asJson();/**/
                 
-                String ndif3 = "{\"name\":\"prueba3\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
+                String ndif3 = "{\"name\":\"prueba3\", \"dif\":" + 1 + ", \"creador\":\"40\"}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif3).asJson();/**/
                 
-                String ndif4 = "{\"name\":\"prueba4\", \"dif\":" + 1 + ", \"creador\":\"0\"}";
+                String ndif4 = "{\"name\":\"prueba4\", \"dif\":" + 1 + ", \"creador\":\"70\"}";
                 /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
@@ -139,7 +139,7 @@ public class SnakeTest {
             
         }
         
-        //@Test
+        @Test
         public void testInicioManual() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -167,12 +167,19 @@ public class SnakeTest {
                 String nmsg = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + (i+20) + "\"]}";
                 wsc[i].sendMessage(nmsg);
                 
-                String nmsg2 = "{\"funcion\": \"unirGame\", \"params\": [\"" + "prueba2" + "\"]}";
-                wsc[i].sendMessage(nmsg2);
+                
 
             }
-
             
+            Thread.sleep(1000);
+            
+            for(int i = 0; i < wsc.length; i++){
+            
+                String nmsg2 = "{\"funcion\": \"unirGame\", \"params\": [\"" + "prueba2" + "\"]}";
+                wsc[i].sendMessage(nmsg2);
+                
+            }
+                        
             String nmsg3 = "{\"funcion\": \"comenzarPartida\", \"params\": [\"" + "prueba2" + "\"]}";
             wsc[0].sendMessage(nmsg3);
             
@@ -190,7 +197,7 @@ public class SnakeTest {
             
         }
             
-        //@Test
+        @Test
         public void testFinJuego() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -258,7 +265,7 @@ public class SnakeTest {
         }
         
         
-        //@Test
+        @Test
         public void testEspera() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
             
             //https://bz.apache.org/bugzilla/show_bug.cgi?id=56026
