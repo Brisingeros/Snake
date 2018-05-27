@@ -246,7 +246,7 @@ public class SnakeTest {
             
         }
             
-        //@Test
+        @Test
         public void testFinJuego() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -314,7 +314,7 @@ public class SnakeTest {
         }
         
         
-        @Test
+        //@Test
         public void testEspera() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
             
             //https://bz.apache.org/bugzilla/show_bug.cgi?id=56026

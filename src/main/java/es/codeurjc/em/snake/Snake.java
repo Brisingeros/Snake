@@ -96,6 +96,7 @@ public class Snake {
 	}
 
 	protected synchronized void sendMessage(String msg) throws Exception {
+            if(this.session.isOpen())
 		this.session.sendMessage(new TextMessage(msg));
 	}
 

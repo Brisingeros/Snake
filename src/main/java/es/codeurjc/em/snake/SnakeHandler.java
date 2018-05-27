@@ -145,7 +145,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                             try {
                                 vacio = String.format("{\"type\": \"leave\", \"id\": %d}", snS.getId());
 
-                                    snek.sendMessage(vacio);
+                                snek.sendMessage(vacio);
+                                
 
                             }
                             catch (Exception ex) {
@@ -564,7 +565,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     SnakeGame sala = salas.get(s);
                     
-                synchronized(sala){
+                synchronized(sessions.values()){
                 
                 if(snek != null){
                     
