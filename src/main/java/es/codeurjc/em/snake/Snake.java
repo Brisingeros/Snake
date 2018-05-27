@@ -85,7 +85,7 @@ public class Snake {
 		sendMessage(n.toString());
 	}
 
-	protected synchronized void sendMessage(String msg) throws Exception {
+	protected void sendMessage(String msg) throws Exception {
 		this.session.sendMessage(new TextMessage(msg));
 	}
 
@@ -119,7 +119,7 @@ public class Snake {
 
 	private void handleCollisions(Collection<Snake> snakes) throws Exception {
 
-		for (Snake snake : snakes) {
+		for (Snake snake : snakes) {/////////////////////////////////////
 
 			boolean headCollision = this.id != snake.id && snake.getHead().equals(this.head);
 

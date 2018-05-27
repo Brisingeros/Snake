@@ -14,6 +14,7 @@ import javax.websocket.DeploymentException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.web.socket.TextMessage;
 
 public class SnakeTest {
 
@@ -40,12 +41,11 @@ public class SnakeTest {
                         .header("Content-Type", "application/json")
                         .body(ndif3).asJson();/**/
                 
-                /*
+                String ndif4 = "{\"name\":\"prueba4\", \"dif\":" + 1 + "}";
+                /**/
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
-                        .field("dif", "1")
-                        .field("name", "prueba")
-                        .asJson();*/
+                        .body(ndif4).asJson();/**/
                 
             } catch (UnirestException ex) {
                 Logger.getLogger(SnakeTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -54,7 +54,7 @@ public class SnakeTest {
             }
 	}
 		
-	@Test
+	//@Test
 	public void testConnection() throws Exception {
 		
 		WebSocketClient wsc = new WebSocketClient();
@@ -184,7 +184,7 @@ public class SnakeTest {
             
         }
             
-       @Test
+        //@Test
         public void testFinJuego() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -201,15 +201,25 @@ public class SnakeTest {
             wsc[1] = new WebSocketClient();
             wsc[1].onMessage((session,msg)->{
                 
+                if(msg.contains("finJuego")){
                     firstMsg.set(msg);
+                    //Aquí debería mandarse un mensaje tipo salir, que sacase la serpiente y destruyese la sala. No hemos podido recrear este comportamiento.
+                    //Por eso este test sigue mandado mensajes update
+                }
                 
             });
             wsc[1].connect("ws://127.0.0.1:9000/snake");
             
             for(int i = 0; i < wsc.length; i++){
             
-                String nmsg = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + i + "\"]}";
+                String nmsg = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + (i+40) + "\"]}";
                 wsc[i].sendMessage(nmsg);
+
+            }
+            
+            Thread.sleep(2000);
+            
+            for(int i = 0; i < wsc.length; i++){
                 
                 String nmsg2 = "{\"funcion\": \"unirGame\", \"params\": [\"" + "prueba3" + "\"]}";
                 wsc[i].sendMessage(nmsg2);
@@ -222,13 +232,16 @@ public class SnakeTest {
             
             Thread.sleep(5000);
             
-            String nmsg4 = "{\"funcion\": \"salirSala\", \"params\": [\"" + 0 + "\"]}";
+            String nmsg4 = "{\"funcion\": \"salirSala\", \"params\": [\"" + 40 + "\"]}";
             wsc[0].sendMessage(nmsg4);
             
             Thread.sleep(2000);
             String msg = firstMsg.get();
 
                     assertTrue("The fist message should contain 'finJuego', but it is "+msg, msg.contains("finJuego"));
+                    
+                    
+            Thread.sleep(1000);
             
             for(int i = 0; i < wsc.length; i++){
             
@@ -239,6 +252,84 @@ public class SnakeTest {
         }
         
         
-        
+        @Test
+        public void testEspera() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
+            
+            //https://bz.apache.org/bugzilla/show_bug.cgi?id=56026
+            
+            AtomicReference<String> firstMsg = new AtomicReference<>();
+            ObjectNode difusion = null;
+		
+            WebSocketClient wsc[] = new WebSocketClient[5];
+                    
+            //Crear 3 primero jugadores
+            for(int i = 0; i < 4; i++){
+                
+                wsc[i] = new WebSocketClient();
+                
+                wsc[i].onMessage((session, msg) -> {
+                    System.out.println("TestMessage: "+msg);
+                    //firstMsg.compareAndSet(null, msg);
+                });
+                
+                wsc[i].connect("ws://127.0.0.1:9000/snake");
+                
+                //Crear su serpiente
+                String nmsg = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + (i+70) + "\"]}";
+                wsc[i].sendMessage(nmsg);
+                
+            }
+            
+            //Crear 4 jugador, el único que mira msg
+            wsc[4] = new WebSocketClient(); 
+            wsc[4].onMessage((session, msg) -> {
+                System.out.println("TestMessage: "+msg);
+                firstMsg.set(msg);
+            });
+            wsc[4].connect("ws://127.0.0.1:9000/snake");
+            
+            //Crear su serpiente
+            String nmsg2 = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + 74 + "\"]}";
+            wsc[4].sendMessage(nmsg2);
+
+            Thread.sleep(2000);
+            System.out.println("Connected");
+            
+            //Unirlos todos a juego
+            String nmsg3 = "{\"funcion\": \"unirGame\", \"params\": [\"" + "prueba4" + "\"]}";
+            for(int i = 0; i < wsc.length-1; i++){
+            
+                System.out.println(i + " Se conecta a la sala con msg: "+nmsg3);
+                wsc[i].sendMessage(nmsg3);
+                
+            }
+            
+
+            Thread.sleep(2000);
+            
+            System.out.println(4 + " Se intenta conectar a la sala con msg: "+nmsg3);
+            wsc[4].sendMessage(nmsg3);
+            
+            Thread.sleep(1000);
+            
+            String nmsg4 = "{\"funcion\": \"salirSala\", \"params\": [\"" + 70 + "\"]}";
+            wsc[0].sendMessage(nmsg4);
+            
+            
+            Thread.sleep(4000); //Esperamos para que el que se encuentra en espera sepa que tiene un hueco
+
+            //Comprobar el mensaje
+            String msg = firstMsg.get();
+
+                    assertTrue("The fist message should contain 'update', but it is "+msg, msg.contains("update"));
+
+            
+            for(int i = 0; i < wsc.length; i++){
+            
+                wsc[i].disconnect();
+            
+            }
+            
+        }
 
 }

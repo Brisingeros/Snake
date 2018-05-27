@@ -46,7 +46,7 @@ public class SnakeGame {
         }
 	public void addSnake(Snake snake) {
 
-                synchronized(snake){
+                synchronized(snake.getSession()){
                     snakes.put(snake.getId(), snake);
                 }
 
@@ -64,7 +64,7 @@ public class SnakeGame {
 
 	public void removeSnake(Snake snake) {
 
-            synchronized(snake){
+            synchronized(snake.getSession()){
 		snakes.remove(Integer.valueOf(snake.getId()));
             }
                 
@@ -85,13 +85,17 @@ public class SnakeGame {
 		try {
 
 			for (Snake snake : getSnakes()) {
+                            synchronized(snake.getSession()){
 				snake.update(getSnakes());
+                            }
 			}
                         
 			StringBuilder sb = new StringBuilder();
 			for (Snake snake : getSnakes()) {
+                            synchronized(snake.getSession()){
 				sb.append(getLocationsJson(snake));
 				sb.append(',');
+                            }
 			}
 			sb.deleteCharAt(sb.length()-1);
                         
@@ -136,7 +140,7 @@ public class SnakeGame {
 
 	private String getLocationsJson(Snake snake) {
 
-		synchronized (snake) {
+		synchronized (snake.getSession()) {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("{\"x\": %d, \"y\": %d}", snake.getHead().x, snake.getHead().y));
@@ -149,11 +153,12 @@ public class SnakeGame {
 		}
 	}
 
-	public void broadcast(String message) throws Exception {
+	public synchronized void broadcast(String message) throws Exception {
 
 		for (Snake snake : getSnakes()) {
+                    synchronized(snake.getSession()){
 			try {
-
+                            
                                 System.out.println("Sending message " + message + " to " + snake.getId());
                                 snake.sendMessage(message);
 
@@ -162,6 +167,8 @@ public class SnakeGame {
 				ex.printStackTrace(System.err);
 				removeSnake(snake);
 			}
+                        
+                    }
 		}
 	}
 
@@ -224,11 +231,15 @@ public class SnakeGame {
             
             for(Snake s : this.getSnakes()){
                 
-                if(s.getPuntos() > pts){
-                    pts = s.getPuntos();
-                    
-                    aux[0] = s.getName();
-                    aux[1] = Integer.toString(pts);
+                synchronized(s.getSession()){
+                
+                    if(s.getPuntos() > pts){
+                        pts = s.getPuntos();
+
+                        aux[0] = s.getName();
+                        aux[1] = Integer.toString(pts);
+                    }
+                
                 }
                 
             }
