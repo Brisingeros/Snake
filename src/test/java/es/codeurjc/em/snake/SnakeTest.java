@@ -47,6 +47,12 @@ public class SnakeTest {
                         .header("Content-Type", "application/json")
                         .body(ndif4).asJson();/**/
                 
+                /*
+                String ndif5 = "{\"name\":\"prueba5\", \"dif\":" + 1 + "}";
+                Unirest.post("http://127.0.0.1:9000/newGame")
+                        .header("Content-Type", "application/json")
+                        .body(ndif5).asJson();*/
+                
             } catch (UnirestException ex) {
                 Logger.getLogger(SnakeTest.class.getName()).log(Level.SEVERE, null, ex);
             } finally{
@@ -252,7 +258,7 @@ public class SnakeTest {
         }
         
         
-        @Test
+        //@Test
         public void testEspera() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
             
             //https://bz.apache.org/bugzilla/show_bug.cgi?id=56026
@@ -316,7 +322,7 @@ public class SnakeTest {
             wsc[0].sendMessage(nmsg4);
             
             
-            Thread.sleep(4000); //Esperamos para que el que se encuentra en espera sepa que tiene un hueco
+            Thread.sleep(2000); //Esperamos para que el que se encuentra en espera sepa que tiene un hueco
 
             //Comprobar el mensaje
             String msg = firstMsg.get();
@@ -332,4 +338,13 @@ public class SnakeTest {
             
         }
 
+        
+        //@Test
+        public void testCarga(){
+        
+            //Nuestras partidas son generadas por APIRest
+            //El creador de la sala es gestionado en JavaScript
+            //No podemos simular el comportamiento de botones y creaciones empleado en JavaScript en este test
+            
+        }
 }

@@ -116,7 +116,12 @@ public class SnakeHandler extends TextWebSocketHandler {
                     Snake snek = (Snake) session.getAttributes().get(SNAKE_ATT);
                     String nombreSala = (String) session.getAttributes().get(SALA_ATT);
                     
-                    SnakeGame sala = salas.get(nombreSala);
+                    SnakeGame sala;
+                    
+                    synchronized(session){
+                        sala = salas.get(nombreSala);
+                    }
+                    
                     int num;
                     
                     
@@ -127,11 +132,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                         snek.resetState();
                     }
                     
-                    //Hasta aquí, la sala existe
+                    
+                    sala.removeSnake(snek);
                     
                     synchronized(sala){
-                        sala.removeSnake(snek);
-                        //////////////////////////////////////////////MIRAR
                         num = sala.getNum();
                     }
                     
@@ -291,7 +295,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                             } else{
                                 
                                 try {
-                                    if(sem.tryAcquire(10, 500, TimeUnit.MILLISECONDS)){
+                                    if(sem.tryAcquire(5, 1000, TimeUnit.MILLISECONDS)){
                                         
                                         ObjectNode difusion = mapper.createObjectNode();
                                         difusion.put("type","senal");
@@ -308,11 +312,9 @@ public class SnakeHandler extends TextWebSocketHandler {
                                         System.out.println("////////////////////////////////////////Intenta entrar");
                                         
                                     }
-                                } catch (InterruptedException ex) {
+                                } catch (InterruptedException | IOException ex) {
                                     Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                                } catch (IOException ex) {
-                                    Logger.getLogger(SnakeHandler.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                                }
                             
                             }
                             
@@ -512,6 +514,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                 String s;
                 Snake snek;
                 String name;
+                
                 synchronized(session){
                 //Cogemos ambos attribs
                     s = (String) session.getAttributes().get(SALA_ATT);
@@ -522,21 +525,12 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     name = snek.getName();
                     //Quitamos la serpiente de la sala y mandamos mensaje
+                    
                     if(!s.equals("none")){
-
-                        SnakeGame sala;
-
-                        synchronized(s){
-                            sala = salas.get(s);
-                        }
-
-                        synchronized(sala){
-
-                            sala.removeSnake(snek);
-                            String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
-
-                            sala.broadcast(msg);
-
+                        
+                        synchronized(session){
+                            String[] vac = null;
+                            this.Funciones.get("salirSala").ExecuteAction(vac, session);
                         }
 
                     }
@@ -548,9 +542,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                     difusion.put("name", name);
 
                     //Quitamos la serpiente de sesiones
-                    synchronized(snek.getSession()){
-                        sessions.remove(snek.getName(), snek);
-                    }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    sessions.remove(snek.getName(), snek);
 
                     //Mandamos mensaje, ya sincronizado en sendmessage
                     for(Snake snk : sessions.values()){
