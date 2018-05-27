@@ -14,7 +14,6 @@ import javax.websocket.DeploymentException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.web.socket.TextMessage;
 
 public class SnakeTest {
 
@@ -399,8 +398,6 @@ public class SnakeTest {
         public void testCarga(){
         
             //Nuestras partidas son generadas por APIRest
-            //El creador de la sala es gestionado en JavaScript
-            //No podemos simular el comportamiento de botones y creaciones empleado en JavaScript en este test
             
         }
 }

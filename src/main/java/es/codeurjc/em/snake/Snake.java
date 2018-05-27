@@ -86,7 +86,7 @@ public class Snake {
 		sendMessage(n.toString());
 	}
 
-	private synchronized void reward(Snake s) throws Exception {
+	private synchronized void reward(Snake s) throws Exception { //Ya no aumenta de tamaño por colisión positiva, sino al consumir comida
 		//this.length++;
 		ObjectNode n = mapper.createObjectNode();
                 n.put("type","kill");
@@ -169,21 +169,21 @@ public class Snake {
             return session;
         }
 
-    public String getName() {
-        return name;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public boolean isInGame() {
-        return inGame;
-    }
+        public boolean isInGame() {
+            return inGame;
+        }
 
-    public void setInGame(boolean inGame) {
-        this.inGame = inGame;
-    }
-    
-    public void aumLength(){
-        this.length++;
-    }
+        public void setInGame(boolean inGame) {
+            this.inGame = inGame;
+        }
+
+        public void aumLength(){
+            this.length++;
+        }
         
         
 }

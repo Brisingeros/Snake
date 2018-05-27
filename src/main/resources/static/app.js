@@ -1,45 +1,42 @@
 var Console = {};
 
-Console.log = (function(message) {
+Console.log = (function(message) { //Consola para chat
 	var console = document.getElementById('console');
 	var p = document.createElement('p');
 	p.style.wordWrap = 'break-word';
-        
-        //p.style.color = '#ffa500';
 	p.innerHTML = message;
 	console.appendChild(p);
-	/*while (console.childNodes.length > 25) {
-		console.removeChild(console.firstChild);
-	}
-	console.scrollTop = console.scrollHeight;*/
+
 });
 
 var name;
 
-function myFunction()
+function pedirNombre() //solicitar nombre de usuario
 {
 
     do{
     
-        name=prompt("Inserta tu nombre","Nombre");
+        name=prompt("Inserta tu nombre","Nombre"); //Nombre es el valor por defecto que tiene la variable name
         
-    }while(name == "Nombre" || name == "null");
+	}while(name == "Nombre" || name == "null"); //mientras no escriba nada o lo deje en blanco se le sigue solicitando
+												//pues el nombre es imprescindible para jugar
 
 
 	var newSnake = {
 						
-		funcion: "crearSerpiente",
+		funcion: "crearSerpiente", //metodo que se llama desde el handleText
 		params: [name]
 	
 	}
-	game.socket.send(JSON.stringify(newSnake));
+	game.socket.send(JSON.stringify(newSnake)); //envio de mensaje al socket
 
 
 }
 
 let game;
-let enPartida = false;
-let salaP = null;
+let enPartida = false; //indica si el jugador esta en partida (true) o en el lobby (false)
+let salaP = null; //nombre de la sala donde se encuentra el usuario
+
 class Snake {
 
 	constructor() {
@@ -58,35 +55,38 @@ class Snake {
 		}
 	}
 }
-//////////////////////////////////////////////////////////////////////////
-function salir(){
+
+function salir(){ //metodo para salir de una sala (este o no jugando)
 
 	
-	if(game.nextFrame != null)
+	if(game.nextFrame != null) //si no se ha parado el juego, se para
 		game.stopGameLoop();
-	else
+	else //si el juego esta parado (esta en la sala esperando a entrar a jugar) se limpia el canvas
 		game.context.clearRect(0, 0, 640, 480);
 
 	var o = {
 
-		funcion: "salirSala",
-		params: [name]
+		funcion: "salirSala", //funcion en Java
+		params: []
 
 	}
 	game.socket.send(JSON.stringify(o));
 	
-	borrarDiv('#salaActual');
+	borrarDiv('#salaActual'); //borramos el div que contiene los nombres de los jugadores en la sala
 	document.getElementById("partidas-container").style.display = 'inline-block';
 	document.getElementById("serpiente").style.display = "block";
 	document.getElementById("ranking").style.display = "inline-block";
-	salaP = null;
+	salaP = null; //lo ponemos a null porque al salir de la sala, ya no se encuentra en esa partida
+	partidas(); //hacemos get de las partidas que hay creadas (APIRest)
 
 }
-class Food {
+
+class Food { //clase para la comida 
+
 	constructor () {
-		this.x =-1;
-		this.y=-1;
-		this.color= null;
+		this.x =-1; //posicion en x
+		this.y=-1; //posicion en y
+		this.color= null; //color
 	}
 	
 	draw (context){
@@ -159,7 +159,7 @@ class Game {
                     
                 }
 		this.socket.send(JSON.stringify(dir));
-		//Console.log('Sent: Direction ' + direction);
+
 	}
 
 	startGameLoop() {
@@ -189,13 +189,14 @@ class Game {
 		this.food.draw(this.context);
 	}
 
-	updateFood (x,y,color){
+	updateFood (x,y,color){ //cuando se recoge una comida, se posiciona otra en el canvas
 
 		this.food.x=x;
 		this.food.y=y;
 		this.food.color= color;
 
 	}
+
 	addSnake(id, color,name,ptos) {
 		this.snakes[id] = new Snake();
 		this.snakes[id].color = color;
@@ -229,24 +230,26 @@ class Game {
 		}
 	}
 
-	updatePuntos(id,ptos){
+	updatePuntos(id,ptos){ //set de los puntos de cada serpiente
 
 		this.snakes[id].puntos = ptos;
 
 	}
 
-	drawPoints(space, id){
+	drawPoints(space, id){ //mostramos por pantalla el nombre del jugador y sus puntos
 
 		this.context.font = "20px Tw Cen MT";
 		this.context.fillStyle = this.snakes[id].color;
-                this.context.textAlign="left";
-		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,19,space);
+		this.context.textAlign="left";
+		this.context.fillText(this.snakes[id].nombre + ": " + this.snakes[id].puntos,19,space); //space es la posicion en y de las letras
 
 	}
-	sala(jugadores,sala,creador){
+	sala(jugadores,sala,creador){ //sala de espera para entrar a partida (se llama cada vez que entra un jugador en la sala)
 		
+		////OCULTAMOS LOS ELEMENTOS DEL LOBBY
 		document.getElementById("serpiente").style.display = "none";
 		document.getElementById("ranking").style.display = "none";
+		////CREAMOS LOS ELEMENTOS DE LA SALA
 		game.context.clearRect(0, 0, 640, 480);
 		var d = document.getElementById("salaActual");
 		borrarDiv('#salaActual');
@@ -260,20 +263,20 @@ class Game {
 		b1.id = "salir";
 		b1.textContent = "Salir";
 
-		b1.addEventListener("click", salir);
+		b1.addEventListener("click", salir); //boton de salir de la sala
 		
 		d.appendChild(b1);
-		if(jugadores.length >= 2 && name === creador){
+		if(jugadores.length >= 2 && name === creador){ //si hay 2 o mas jugadores, y el usuario es el creador de la sala, le aparece el boton de comenzar partida
 
 			var b2 = document.createElement("button");
 			b2.textContent = "Comenzar juego";
 			b2.id = "comenzar";
-			b2.addEventListener("click",function(){
+			b2.addEventListener("click",function(){ //comienza partida
 
 				var ob = {
 
-					funcion: "comenzarPartida",
-					params: [salaP]
+					funcion: "comenzarPartida", //metodo invocado en Java
+					params: [salaP] //le pasamos el nombre de la sala para avisar a todos los jugadores que hay en ella
 
 				}
 
@@ -284,6 +287,7 @@ class Game {
 
 		}
 
+		//MOSTRAMOS LOS JUGADORES QUE HAY EN LA SALA
 		var inc = 0;
 		for(var i = 0; i < jugadores.length; i++){
 
@@ -304,8 +308,8 @@ class Game {
                     // Socket open.. start the game loop.
                     Console.log('Info: WebSocket connection opened.');
                     Console.log('Info: Press an arrow key to begin.');
-
-                    myFunction();
+					//solicitamos el nombre
+                    pedirNombre();
                     
                     var ping = {
                         funcion: "ping",
@@ -325,7 +329,7 @@ class Game {
                     var packet = JSON.parse(message.data);
 
                     switch (packet.type) {
-						case 'esperaEntrar': 
+						case 'esperaEntrar': //hay 4 jugadores en sala y queremos esperar para unirnos
 								espera();
 								break;
 						case 'update':
@@ -337,14 +341,11 @@ class Game {
 								
                                 break;
 						case 'join':
-								//Console.log("Serpiente agregada");
                                 for (var j = 0; j < packet.data.length; j++) {
                                         this.addSnake(packet.data[j].id, packet.data[j].color, packet.data[j].name, packet.data[j].puntos);
 								}
-								//this.sala(packet.name);
                                 break;
                         case 'leave':
-                        		Console.log("Se va: " + packet.id);
 								this.removeSnake(packet.id);
                                 break;
                         case 'dead':
@@ -357,7 +358,7 @@ class Game {
 								this.updatePuntos(packet.id,packet.puntos);
                                 break;
 
-                        case 'chat':
+                        case 'chat': //mostramos el nombre del usuario en funcion de si esta en partida (verde) o en el lobby (rojo)
                                 var color;
                                 if(packet.enPartida)
                                     color = 'green';
@@ -365,45 +366,42 @@ class Game {
                                     color = 'red';
 								Console.log(packet.name.fontcolor(color) + " : " + packet.mensaje);
 								break;
-						case 'sala' :		
-								document.getElementById("partidas-container").style.display = 'none';
+						case 'sala' : //sala de espera para empezar a jugar
+								document.getElementById("partidas-container").style.display = 'none';//ocultamos las partidas que hay creadas para que no se una a otra
 								this.sala(JSON.parse(packet.players),packet.sala,packet.creador);
 								break;
-						case 'jugar' : 
+						case 'jugar' : //el creador pulsa el boton de comenzar partida
 								if(document.getElementById("comenzar")!= null)
 									document.getElementById("salaActual").removeChild(document.getElementById("comenzar"));
 								this.startGameLoop();
 								break;
 
 						case 'quitarSala': 
-								//eliminamos el div de la partida porque se han salido todos los jugadores
-								//Console.log(packet.sala);
-
+								//eliminamos el div de la partida porque se han salido todos los jugadores 
 								var node = document.getElementById(packet.sala);
 								if(node !== null){
 									node.parentNode.removeChild(node);
 								}
 								break;
 
-						case 'senal' :
+						case 'senal' : //enviamos un mensaje desde Java
 								Console.log(packet.contenido);
 								break;
 
-						case 'finJuego':
+						case 'finJuego': //el usuario se ha salido de la partida
 								Console.log(packet.contenido);
 								salir();
 								break;
 
-						case 'falloNombre':
-								myFunction();
+						case 'falloNombre': //el nombre ya existe. Se solicita otro
+								pedirNombre();
 								break;
 						
-						case 'sumaPuntos': 
+						case 'sumaPuntos': //Actualizamos los puntos del usuario
 								this.updatePuntos(packet.id,packet.puntos);
-								//Console.log("Puntos: " + this.snakes[packet.id].puntos);
 								break;
 
-						case 'finPartida':
+						case 'finPartida': //fin de la partida
 
 								this.stopGameLoop();
 								window.setTimeout(function(){
@@ -412,7 +410,7 @@ class Game {
 									game.context.font="20pt Verdana";
 									game.context.fillStyle = "#CCCCCC";
 
-									if(packet == null)
+									if(packet.ganador == null)
 										game.context.fillText("¡Empate!",90,240);
 									else
 									game.context.fillText("¡Ha ganado: " + packet.ganador + " con \n" + packet.puntos + " puntos!",90,240);
@@ -420,9 +418,11 @@ class Game {
 								}, 2000);
 								
 								break;
-						case 'jugadorConecta':	addListaJugadores(JSON.parse(packet.names));
+						case 'jugadorConecta':	addListaJugadores(JSON.parse(packet.names)); //se conecta un nuevo jugador 
 								break;
-						case 'jugadorDesconecta': removeListaJugadores(packet.name);
+						case 'jugadorDesconecta': removeListaJugadores(packet.name); //se desconecta un jugador
+								break;
+						case 'finEspera': finEspera(); //el jugador ha entrado a partida tras estar esperando
 								break;
                     }
             }
@@ -430,33 +430,39 @@ class Game {
 	}
 }
 
-function espera(){
+function finEspera(){ //eliminamos el boton de cancelar y el mensaje
 
-        borrarDiv('#cancelar');
+	document.getElementById("cancelar").style.display = 'none';
+
+}
+function espera(){ //el usuario espera por si sale un jugador
+
+	borrarDiv('#cancelar');
 	var n = document.getElementById("cancelar");
 	n.style.display = 'inline-block';
 	n.innerHTML = "Intentando unirse \n a la sala...";
 	var boton = document.createElement("button");
 	boton.textContent = "Cancelar";
 	boton.id = "cancelarEspera";
-	boton.addEventListener("click", function(){
+	boton.addEventListener("click", function(){ //si el usuario decide cancelar, se lo decimos al servidor
 
+		finEspera();
 		var ob = {
 
 			funcion: "cancelarEspera",
-			params: [name]
+			params: []
 
 		}
 
 		game.socket.send(JSON.stringify(ob));
-		n.style.display = 'none';
+		
 		
 	});
 
 	n.appendChild(boton);
 
 }
-function addListaJugadores(jugadores){
+function addListaJugadores(jugadores){ //actualizamos la lista de jugadores online (se une un usuario)
 
 	$('#lista').empty();
 	document.getElementById("lista").textContent = "Jugadores Online";
@@ -469,21 +475,21 @@ function addListaJugadores(jugadores){
 
 }
 
-function removeListaJugadores(jugador){
+function removeListaJugadores(jugador){ //actualizamos la lista de jugadores online (se desconecta un usuario)
 
 	var n = document.getElementById(jugador);
 	document.getElementById("lista").removeChild(n);
 
 }
 
-function postPartida(d){
+function postPartida(d){ //post a APIRest para guardar la partida creada
 
 	document.getElementById("selector").style.display = 'none';
 	var ob = {
 		
-		name: salaP,
-		dif: d,
-                creador: name
+		name: salaP, //nombre de la partida
+		dif: d, //dificultad de la partida
+		creador: name //somos el creador de la partida
 
 	}
 	$.ajax({
@@ -506,20 +512,20 @@ function postPartida(d){
 
 }
 
-function buscar(dif){
+function buscar(dif){ //Matchmaking
 	
 	document.getElementById("selector").style.display = 'none';
 	var o = {
 		
 		funcion: "matchMaking",
-		params:[dif] //PASAR LA DIFICULTAD
+		params:[dif] //dificultad seleccionada por el usuario
 
 	}
 
 	game.socket.send(JSON.stringify(o));
 
 }
-function selector(funcion){
+function selector(funcion){ //selector de dificultad
 
 	document.getElementById("partidas-container").style.display = "none";
 	var dificultad; //facil:1,medio:2,dificil:4
@@ -581,47 +587,48 @@ function selector(funcion){
 
 
 $(document).ready(function(){
-    $('#send-btn').click(function() {
+    $('#send-btn').click(function() { //boton de enviar del chat
         var object = {
             funcion: "Chat",
             params:[name, $('#message').val()]
         }
 
-        game.socket.send(JSON.stringify(object));
+		game.socket.send(JSON.stringify(object));
+
         $('#message').val('');
     });
-    $('#crear-btn').click(function(nombrePartida) {
+    $('#crear-btn').click(function(nombrePartida) { //boton de crear partida
 		var p;
 		
 		do{
 
 			p =prompt("Inserta el nombre de la sala","Nombre");
 
-		}while(p =="Nombre");
+		}while(p =="Nombre" || p == ''); //se le pide un nombre mientras no introduzca algo
 
-		if(p !== null){
+		if(p !== null){ //si el usuario cancela, p es null
 			salaP = p;
 			selector("post");
 		}
 		
     });
-	$('#actualizar-btn').click(function(){
+	$('#actualizar-btn').click(function(){ //boton de actualizar
 		
 		partidas()
 	});
 
-	$('#buscar-btn').click(function(){
+	$('#buscar-btn').click(function(){ //boton de buscar partida
 		
 		selector();
 		
 	});
 
-	$('#ranking').click(function(){
+	$('#ranking').click(function(){ //boton de ranking
 
 		document.getElementById("serpiente").style.display = "none";
 		document.getElementById("ranking").style.display = "none";
-		//RANKING
-		$.ajax({
+
+		$.ajax({ //get de los 10 mejores puntos
 			
 			method:"GET",
 			url:"http://" + window.location.host + "/muroPuntos",
@@ -635,10 +642,9 @@ $(document).ready(function(){
 			var puntos = JSON.parse(data);
 			for(var i = 0; i < puntos.length; i++){
 	
-				//var array = JSON.parse(puntos[i]);
 				var array = puntos[i];
 				var div = document.createElement("div");
-				div.textContent = array[0] + " : " + array[1]; //0 nombre, 1 puntos
+				div.textContent = array[0] + " : " + array[1]; //pos 0 nombre, pos 1 puntos
 				document.getElementById("muro").appendChild(div);
 	
 			}
@@ -667,7 +673,7 @@ $(document).ready(function(){
     
 })
 
-function partidas(){
+function partidas(){ //get APIRest de las partidas creadas hasta el momento
 
     $.ajax({
 
@@ -680,7 +686,7 @@ function partidas(){
 		borrarDiv('#partidas');
 
 		var partidas = JSON.parse(data);
-		for(var i = 0; i < partidas.length; i++){
+		for(var i = 0; i < partidas.length; i++){ //las mostramos
 
 			crearDiv(partidas[i]); 
 
@@ -690,29 +696,28 @@ function partidas(){
 
 }
 
-function borrarDiv(id){
+function borrarDiv(id){ //borramos un div introducido por parametro
     
     $(id).empty();
     
 }
 
-function crearDiv(info){
+function crearDiv(info){ //creamos los divs de las partidas
 
-	//info = JSON.parse(info);
 	var newDiv = document.createElement("div"); 
 	var d = info[2]==1?"fácil":info[2]==2?"normal":"dificil";
-	newDiv.id = info[0];					//Id = nombreSala
-	var newContent = document.createTextNode(info[0] + "     " + info[1] + "/4        " + d); 
+	newDiv.id = info[0];					//pos 0 nombreSala
+	var newContent = document.createTextNode(info[0] + "     " + info[1] + "/4        " + d); //pos 1 numero de jugadores conectados a la sala, pos 2 dificultad
 	newDiv.appendChild(newContent); //añade texto al div creado. 
 	var boton = document.createElement("button");
 	boton.type = "button";
 	boton.textContent = "unirse";
 	boton.style.alignSelf = "right";
 	boton.id = "unirse-btn"
-	boton.addEventListener("click", function(){	
+	boton.addEventListener("click", function(){	 //se une a la sala (o lo intenta)
 		var part = {
             funcion: "unirGame",
-            params:[info[0],name]
+            params:[info[0]]
         }
 
         game.socket.send(JSON.stringify(part));

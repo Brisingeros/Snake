@@ -37,8 +37,8 @@ public class SnakeHandler extends TextWebSocketHandler {
         private Gson gson = new Gson();
 
         
-        private ConcurrentHashMap<String, SnakeGame> salas;
-        private ConcurrentHashMap<String, Snake> sessions;      //Name
+        private ConcurrentHashMap<String, SnakeGame> salas;     //idSala y SnakeGame
+        private ConcurrentHashMap<String, Snake> sessions;      //idSnake y serpiente
         
         //Diccionario de funciones
         private ConcurrentHashMap<String, Function> Funciones;
@@ -48,7 +48,7 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.sessions = new ConcurrentHashMap<>();
             this.salas = new ConcurrentHashMap<>();
             
-            this.Funciones.putIfAbsent("Chat", new Function(){
+            this.Funciones.putIfAbsent("Chat", new Function(){ //Funcion que maneja el chat
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) { //Params: nombre, mensaje
                     try{
@@ -65,7 +65,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                         difusion.put("mensaje",params[1]);
                         difusion.put("type","chat");
 
-                        for(Snake s : sessions.values()){
+                        for(Snake s : sessions.values()){ //Enviamos el mensaje a cada una de las serpientes en sessions
 
                             s.sendMessage(difusion.toString());
                             
@@ -80,14 +80,14 @@ public class SnakeHandler extends TextWebSocketHandler {
                     }
                 }
             });
-            this.Funciones.put("ping", new Function(){
+            this.Funciones.put("ping", new Function(){                      //Funcion de ping comprobando que sigue habiendo conexión
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     return;
                 }
             });
             
-            this.Funciones.put("direccion", new Function(){
+            this.Funciones.put("direccion", new Function(){                 //Función que maneja el cambio de dirección en el frontend
             
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
@@ -104,8 +104,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                 }            
             
             });
-            this.Funciones.put("salirSala",new Function(){ //salir de la sala: eliminamos de la sala el jugador. Si hay 0 jugadores al final, se elimina la sala
-                                                            //Params: //////////////NombreUsuario, /////////////si está en partida, nombreSala
+            this.Funciones.put("salirSala",new Function(){ //salir de la sala: eliminamos de la sala el jugador. Si hay 0 jugadores al final, se elimina la sala. si se está jugando y queda 1, se elimina la sala
+                                                            //Params:
                 @Override
                 public void ExecuteAction(String[] params, WebSocketSession session) {
                     
@@ -120,11 +120,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     sala = salas.get(nombreSala);
                     
-                    //synchronized(sessions){
                     
                     synchronized(snek){
                     
-                        session.getAttributes().replace(SALA_ATT, "none");//////////////////////////////////////////////////////
+                        session.getAttributes().replace(SALA_ATT, "none");
 
                         snek.setInGame(false);
                         snek.resetState();
@@ -134,14 +133,13 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     synchronized(sala){
                         num = sala.getNum();
-                        ////////////////////////////////////////////////////////////////////////
-                        sala.removeSnake(snek);//Serpiente se va////////////////////////////////////////////////////////////////////
+                        sala.removeSnake(snek);//Serpiente se va
                     }
                     
                     
                     //Mensaje vaciar sala serpiente que se va//
                     String vacio;
-                    for(Snake snS : sala.getSnakes()){////////////////////////////////////////////////////dfipusdgfipusadgfiusagdf
+                    for(Snake snS : sala.getSnakes()){
                             try {
                                 vacio = String.format("{\"type\": \"leave\", \"id\": %d}", snS.getId());
 
@@ -159,7 +157,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     //Mensaje al resto de serpientes//
                     String msg = String.format("{\"type\": \"leave\", \"id\": %d}", snek.getId());
                             
-                    System.out.println("//////////////////////////////////////////////////////////////Sale: " + snek.getId());
+                    //System.out.println("//////////////////////////////////////////////////////////////Sale: " + snek.getId());
                     
                     try {
                         sala.broadcast(msg);
@@ -175,7 +173,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                         if(jugando){
 
-                            if(num == 2){
+                            if(num == 2){                                                                   //Comprobar si quedan dos jugadores, para al salir indicar al otro que debe salir y que gana por retirada
                                 sala.setInGame(false);
                                 Snake aux = (Snake) sala.getSnakes().toArray()[0];
 
@@ -194,7 +192,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                         } else{
 
-                            if(num == 1){
+                            if(num == 1){                                                                   //Comprobar si era el último para eliminar la sala
                                 //Quitamos la sala de todos los divs JS//
                                 ObjectNode n = mapper.createObjectNode();
                                 n.put("type","quitarSala");
@@ -221,10 +219,10 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.Funciones.put("unirGame", new Function(){
             
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: ID snakeGame, //////////////param[1]: nombre player
+                public void ExecuteAction(String[] params, WebSocketSession session) { //Param 0: ID snakeGame
                     
                     boolean entra = false;
-                    Semaphore sem = new Semaphore(0);
+                    Semaphore sem = new Semaphore(0);   //Semáforo usado para controlar el tiempo e intentos de entrar en una sala ya ocupada
                     boolean espera = true;
                     
                     SnakeGame sala;
@@ -233,9 +231,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     Snake ss = (Snake) session.getAttributes().get(SNAKE_ATT);
                     
-                    //synchronized(ss){
-                    
-                    //if(!ss.isEnEspera() && !ss.isInGame())
                     if(!ss.isEnEspera())
                         ss.setEnEspera(true);
                     
@@ -250,10 +245,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 
                                 try {
                                     entra = true;
-
-                                    //Snake ss;
                                     
-                                    synchronized(ss){/////////////////////////////////////////
+                                    synchronized(ss){
 
                                         ss.setEnEspera(false);
                                         ss.setInGame(true);
@@ -261,14 +254,17 @@ public class SnakeHandler extends TextWebSocketHandler {
                                     }
                                     
 
-                                    session.getAttributes().replace(SALA_ATT, params[0]);//////////////////////////////////////////////////
+                                    session.getAttributes().replace(SALA_ATT, params[0]);
 
                                     
-                                    System.out.println("//////////////////////////////////////LA SALA ES: " + params[0]);
+                                    //System.out.println("//////////////////////////////////////LA SALA ES: " + params[0]);
 
-                                    //synchronized(sala){////////
                                         sala.addSnake(ss);
-                                    //}
+                                        
+                                        ObjectNode finEsp = mapper.createObjectNode();
+                                        finEsp.put("type","finEspera");
+                                        ss.sendMessage(finEsp.toString());
+                                        
 
                                         ArrayList<String> jugadores = new ArrayList<>();
                                         for(Snake s : sala.getSnakes()){
@@ -290,7 +286,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                                             ss.sendMessage(n.toString());
 
                                         }
-                                    //}
 
                                     StringBuilder sb = new StringBuilder();
                                     for (Snake snake : sala.getSnakes()) {
@@ -317,7 +312,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 
                                 try {
 
-                                        //sn = (Snake) session.getAttributes().get(SNAKE_ATT);
                                         synchronized(ss){
                                             if(espera && ss.isEnEspera()){
 
@@ -327,7 +321,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                                                 ss.sendMessage(n.toString());
 
                                             }
-                                        //}
                                         
                                     
                                             if(ss.isEnEspera() && sem.tryAcquire(5, 1000, TimeUnit.MILLISECONDS)){
@@ -349,7 +342,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                             } else{
 
                                                 sem.release();
-                                                System.out.println("////////////////////////////////////////Intenta entrar");
+                                                //System.out.println("////////////////////////////////////////Intenta entrar");
 
                                             }
                                         }
@@ -366,10 +359,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                 }            
             
             });
-            this.Funciones.putIfAbsent("cancelarEspera", new Function(){
+            this.Funciones.putIfAbsent("cancelarEspera", new Function(){ //Params: 
             
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) {
+                public void ExecuteAction(String[] params, WebSocketSession session) {              //Método para indicar a la serpiente esperando que ya no debe esperar, se ha cancelado su espera desde JS
                                         
                         Snake sn = (Snake) session.getAttributes().get(SNAKE_ATT);
                         synchronized(sn){
@@ -389,7 +382,7 @@ public class SnakeHandler extends TextWebSocketHandler {
 
                         Snake s = new Snake(id, params[0], session);
 
-                        if(sessions.containsKey(params[0])){
+                        if(sessions.containsKey(params[0])){                        //En caso de que el nombre ya exista, pedir otro
                         
                             try {
                                 //Mensaje acá pidiendo otro nombre
@@ -404,10 +397,10 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 return;
                             }
                             
-                        } else{
+                        } else{                                                     //Si no existe, crear la serpiente
                         
                             sessions.putIfAbsent(params[0], s);
-                            session.getAttributes().putIfAbsent(SNAKE_ATT, s);////////////////////////
+                            session.getAttributes().putIfAbsent(SNAKE_ATT, s);
                             
                             //Mensaje conexión
                             ObjectNode difusion = mapper.createObjectNode();
@@ -421,7 +414,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                             difusion.put("type","jugadorConecta");
                             difusion.put("names", gson.toJson(jugadores));
                             
-                            for(Snake snk : sessions.values()){
+                            for(Snake snk : sessions.values()){                     //Enviar mensaje para actualizar la lista de jugadores conectados
                                     try {
                                         snk.sendMessage(difusion.toString());
                                     } catch (Exception ex) {
@@ -438,7 +431,7 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.Funciones.putIfAbsent("comenzarPartida",new Function(){
                 
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) {          //NombrePartida
+                public void ExecuteAction(String[] params, WebSocketSession session) { //Param: NombrePartida
                     
                     try {
                         
@@ -456,7 +449,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                                 ObjectNode n = mapper.createObjectNode();
                                 n.put("type","jugar");
                                 
-                                sala.broadcast(n.toString());
+                                sala.broadcast(n.toString());                       //Indicamos a todas las serpientes de la sala que comience el juego
                                 
                             }
                         }
@@ -470,7 +463,7 @@ public class SnakeHandler extends TextWebSocketHandler {
             this.Funciones.putIfAbsent("matchMaking",new Function(){
                 
                 @Override
-                public void ExecuteAction(String[] params, WebSocketSession session) {  //Params: longDif       ///////////nombrePlayer
+                public void ExecuteAction(String[] params, WebSocketSession session) {  //Params: longDif
                     
                     String[] para = {"none"};
                     long lg = Long.parseLong(params[0]);
@@ -488,7 +481,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                             if(sg != null && sg.getNum() > 0 && sg.getNum() < 4 && sg.getDif() == lg){
                                 para[0] = s;
 
-                                Funciones.get("unirGame").ExecuteAction(para, session);
+                                Funciones.get("unirGame").ExecuteAction(para, session);                         //Una vez se ha selecionado una sala válida, seguimos con "unirSala"
 
                                 return;
                             }
@@ -497,7 +490,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                         
                     }
                     
-                    if(para[0].equals("none")){
+                    if(para[0].equals("none")){                                                                 //En caso de no existir una sala válida, se lo indicamos al usuario
                         try {
                             
                             ObjectNode difusion = mapper.createObjectNode();
@@ -537,8 +530,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                 Function f = Funciones.get(i.getFuncion());
                 System.out.println(i.getFuncion() + " " + i.getParams());
                 
-                //No es logico synchronized
-                Runnable tarea = () -> f.ExecuteAction(i.getParams(), session);
+                Runnable tarea = () -> f.ExecuteAction(i.getParams(), session);                         //Cada tarea se ejecuta en un hilo
                 executor.execute(tarea);
             
             }catch (Exception e) {
@@ -563,7 +555,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                     s = (String) session.getAttributes().get(SALA_ATT);
                     snek = (Snake) session.getAttributes().get(SNAKE_ATT);
                     
-                    SnakeGame sala = salas.get(s);
                     
                 synchronized(sessions.values()){
                 
@@ -574,10 +565,8 @@ public class SnakeHandler extends TextWebSocketHandler {
                     
                     if(!s.equals("none")){
                         
-                        //synchronized(session){
-                            String[] vac = null;
-                            this.Funciones.get("salirSala").ExecuteAction(vac, session);
-                        //}
+                        String[] vac = null;
+                        this.Funciones.get("salirSala").ExecuteAction(vac, session);
 
                     }
 
@@ -588,7 +577,6 @@ public class SnakeHandler extends TextWebSocketHandler {
                     difusion.put("name", name);
 
                     //Quitamos la serpiente de sesiones
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     sessions.remove(snek.getName(), snek);
 
                     //Mandamos mensaje, ya sincronizado en sendmessage
@@ -603,7 +591,7 @@ public class SnakeHandler extends TextWebSocketHandler {
                 }
                 }
                 
-                System.out.println("//////////////////////////////////////////////////////////////////////////////////Sesioneeeeees: " + sessions.size());
+                //System.out.println("//////////////////////////////////////////////////////////////////////////////////Sesioneeeeees: " + sessions.size());
                 
 	}
         
@@ -640,11 +628,11 @@ public class SnakeHandler extends TextWebSocketHandler {
 
         }
         
-        public static CopyOnWriteArrayList<String[]> getMuro(){
+        public static CopyOnWriteArrayList<String[]> getMuro(){         //APIRest obtiene los puntos desde aquí
             return puntuaciones;
         }
         
-        public static void addPunto(String[] nP){
+        public static void addPunto(String[] nP){                       //Añade los puntos al ranking y controla su tamaño y orden
             
             if(colRanking(nP)){
             
@@ -677,7 +665,7 @@ public class SnakeHandler extends TextWebSocketHandler {
         }
         
         
-        public static boolean colRanking(String[] nP){
+        public static boolean colRanking(String[] nP){              //Método que inserta las puntuaciones, y evita que se repitan nombres
             
             if(puntuaciones.isEmpty()){
                 

@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 
 public class SnakeGame {
     
+    //////////////////////Puntos y comportamiento de serpientes se manejan en java y no en javascript/////////////////////////////
+    
         public Random rnd = new Random(System.currentTimeMillis());
         private ObjectMapper mapper = new ObjectMapper();
 
@@ -22,10 +24,7 @@ public class SnakeGame {
 
 	private ConcurrentHashMap<Integer, Snake> snakes; 
 	private AtomicInteger numSnakes; //Hacer que sólo se juegue cuando hayan 2 jugadores o más
-        //Si sólo hay un jugador, joder la partida
         
-        //Dificultad y modo tiene que ir aquí.
-        //Dificultad = 1 fácil, 2 medio, 4 difícil
         private long difficulty = 1;
         private String creador;
         private boolean inGame;
@@ -52,10 +51,6 @@ public class SnakeGame {
                 
                 numSnakes.getAndIncrement();
 
-                /*
-		if (count == 0) {
-			startTimer();
-		}*/
 	}
 
 	public Collection<Snake> getSnakes() {
@@ -72,11 +67,9 @@ public class SnakeGame {
 
                 
 		if (count == 0) {
-			//stopTimer();
                         if (scheduler != null) {
                             scheduler.shutdown();
                         }
-                        //this.setInGame(false);
 		}
 	}
 
@@ -170,8 +163,8 @@ public class SnakeGame {
             food = new Comida();
             
 		scheduler = Executors.newScheduledThreadPool(2);
-		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);
-                scheduler.schedule(() -> stopTimer(), 1, TimeUnit.MINUTES);
+		scheduler.scheduleAtFixedRate(() -> tick(), TICK_DELAY/difficulty, TICK_DELAY/difficulty, TimeUnit.MILLISECONDS);   //La dificultad aumenta la velocidad
+                scheduler.schedule(() -> stopTimer(), 1, TimeUnit.MINUTES);                         //Nuevo schedule para parar el juego tras 1 minuto
 	}
 
 	public void stopTimer() {
@@ -181,7 +174,6 @@ public class SnakeGame {
                     scheduler.shutdown();
                 }
                 
-                //this.setInGame(false);
                 //Avisa a los js que ha acabado la partida
                 String[] aux = this.getMayorPuntuacion();
                 
@@ -223,7 +215,7 @@ public class SnakeGame {
             return creador;
         }        
         
-        public String[] getMayorPuntuacion(){
+        public String[] getMayorPuntuacion(){           //Encontramos la mayor puntuación, y la almacenamos en SnakeHandler
             
             String[] aux = new String[2];
             int pts = 0;
