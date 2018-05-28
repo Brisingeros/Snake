@@ -45,66 +45,12 @@ public class SnakeTest {
                 Unirest.post("http://127.0.0.1:9000/newGame")
                         .header("Content-Type", "application/json")
                         .body(ndif4).asJson();/**/
-                
-                //Test 5 parte1
-                
-                /*
-                String ndif5 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"100\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif5).asJson();/**/
-                /*
-                String ndif6 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"101\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif6).asJson();
 
-                String ndif7 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"102\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif7).asJson();
-                
-                String ndif8 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"103\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif8).asJson();
-
-                String ndif9 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"104\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif9).asJson();
-
-                String ndif10 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"105\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif10).asJson();
-
-                String ndif11 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"106\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif11).asJson();
-
-                String ndif12 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"107\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif12).asJson();
-
-                String ndif13 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"108\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif13).asJson();
-
-                String ndif14 = "{\"name\":\"prueba5\", \"dif\":" + 1 + ", \"creador\":\"109\"}";
-                Unirest.post("http://127.0.0.1:9000/newGame")
-                        .header("Content-Type", "application/json")
-                        .body(ndif14).asJson();*/
-                
-                //Test 5 parte 2
                 
             } catch (UnirestException ex) {
                 Logger.getLogger(SnakeTest.class.getName()).log(Level.SEVERE, null, ex);
             } finally{
-                Unirest.shutdown();
+                //Unirest.shutdown();
             }
 	}
 		
@@ -118,7 +64,7 @@ public class SnakeTest {
         
         
         /////////////////////////////////////////////////////////////////////////////////
-        //@Test
+        @Test
         public void testInicioAutom() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
             
             //https://bz.apache.org/bugzilla/show_bug.cgi?id=56026
@@ -187,7 +133,7 @@ public class SnakeTest {
             
         }
         
-        //@Test
+        @Test
         public void testInicioManual() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         
             AtomicReference<String> firstMsg = new AtomicReference<>();
@@ -313,7 +259,7 @@ public class SnakeTest {
         }
         
         
-        //@Test
+        @Test
         public void testEspera() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
             
             //https://bz.apache.org/bugzilla/show_bug.cgi?id=56026
@@ -394,10 +340,58 @@ public class SnakeTest {
         }
 
         
-        //@Test
-        public void testCarga(){
+        @Test
+        public void testCarga() throws DeploymentException, IOException, URISyntaxException, InterruptedException{
         
-            //Nuestras partidas son generadas por APIRest
+            WebSocketClient[] wsc = new WebSocketClient[10];
+            AtomicReference<String> firstMsg = new AtomicReference<>();
+            
+            for(int i = 0; i < 10; i++){
+            
+                wsc[i] = new WebSocketClient();
+
+                wsc[i].connect("ws://127.0.0.1:9000/snake"); 
+
+            System.out.println("Conected");
+
+                String ndif5 = "{\"name\":\"prueba" + (i+80) + "\", \"dif\":" + 1 + ", \"creador\":\"" + (i+80) + "\"}";
+                try {
+                    Unirest.post("http://127.0.0.1:9000/newGame")
+                            .header("Content-Type", "application/json")
+                            .body(ndif5).asJson();
+                } catch (UnirestException ex) {
+                    Logger.getLogger(SnakeTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                String nmsg2 = "{\"funcion\": \"crearSerpiente\", \"params\": [\"" + (i+80) + "\"]}";
+                wsc[i].sendMessage(nmsg2);
+                Thread.sleep(1000);
+                String nmsg3 = "{\"funcion\": \"unirGame\", \"params\": [\"prueba"  + (i+80) + "\"]}";
+                wsc[i].sendMessage(nmsg3);
+            }
+            
+            wsc[9].onMessage((session,msg)->{
+            
+                firstMsg.set(msg);
+            
+            });
+            
+            Thread.sleep(2000);
+            
+            for(int i = 0; i < 10; i++){
+                
+                String nmsg4 = "{\"funcion\": \"salirSala\", \"params\": [\"prueba"  + (i+80) + "\"]}";
+                wsc[i].sendMessage(nmsg4);
+
+            }
+            Thread.sleep(1000);
+            String msg = firstMsg.get();
+
+                    assertTrue("The fist message should contain 'quitarSala', but it is "+msg, msg.contains("quitarSala"));
+            for(int i = 0; i < 10; i++){
+           
+                wsc[i].disconnect();
+                
+            }
             
         }
 }
